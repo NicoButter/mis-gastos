@@ -27,7 +27,107 @@
 - Los módulos de finanzas posteriores están presentes como límites de dominio, pero no se añaden a `INSTALLED_APPS`, no tienen modelos ni migraciones.
 - Un tenant no miembro devuelve 404 al resolver contexto para reducir enumeración; los permisos de operación devuelven 403.
 
-## Evidencia de verificación
+## Cierre definitivo — 2026-10-08
+
+**Estado de Fase 0: COMPLETADA.** La validación pendiente se ejecutó posteriormente en PostgreSQL `18.6` local, usando la base aislada de proyecto `gastio_db`.
+
+| Verificación | Resultado confirmado |
+|---|---|
+| Suite backend | `python -m pytest -v`: **9 aprobadas, 0 fallidas, 1.60 s** |
+| Django | `python manage.py check`: sin problemas |
+| Migraciones | Iniciales aplicadas correctamente |
+| Frontend | Lint, build y pruebas aprobadas durante Fase 0 |
+
+La suite backend se ejecuta con **pytest**, desde `backend/` o mediante el archivo de configuración `backend/pyproject.toml`. El comando reproducible desde la raíz es:
+
+```bash
+set -a; source .env; set +a
+.venv/bin/python -m pytest -v -c backend/pyproject.toml backend
+```
+
+`manage.py test` no es actualmente un punto de entrada equivalente ni soportado para esta suite. `manage.py` selecciona `config.settings.development` por defecto y Django usa `DiscoverRunner` basado en `unittest`; las pruebas existentes son funciones pytest y dependen de marcadores `pytest.mark.django_db` y de la configuración `DJANGO_SETTINGS_MODULE=config.settings.test` declarada en `pyproject.toml`. No se modificó el runner, porque no hay una necesidad demostrada de duplicar o migrar la suite.
+
+No queda un riesgo técnico bloqueante para iniciar Fase 1. Como decisión de diseño ya identificada, ADR-003 (política final de autenticación SPA/cookies/CSRF) debe ratificarse antes de implementar los flujos de registro, inicio de sesión e invitaciones de esa fase.
+
+## Auditoría de cierre previa — contexto del sandbox
+
+La siguiente evidencia se conserva como registro de la auditoría realizada en un sandbox que impedía conexiones PostgreSQL. Esa limitación quedó resuelta por la ejecución posterior confirmada anteriormente; no describe el estado final de Fase 0.
+
+### Diagnóstico del entorno
+
+| Componente | Resultado |
+|---|---|
+| Python / Django | Python `3.14.8`, Django `5.2.18` |
+| Node / Angular | Node `22.23.0`; Angular `21.2.x` declarado y build verificado previamente |
+| PostgreSQL cliente / servidor instalado | `psql`, `pg_isready`, `postgres` e `initdb` `18.6` disponibles |
+| Instancia local | No utilizable: no hay proceso ni listener TCP en `127.0.0.1:5432`; el socket visible en `/run/postgresql/.s.PGSQL.5432` no responde |
+| Servicios del sistema | La consulta a systemd fue denegada por el sandbox; no se modificó ningún servicio |
+| Credenciales de proyecto | No existe `.env` local; solo `.env.example`, sin secretos reales |
+
+Se intentó iniciar un clúster exclusivo en un directorio temporal bajo `/tmp`, sin afectar servicios ni datos existentes. El sandbox denegó la creación tanto de sockets TCP como Unix (`Operation not permitted`). El directorio temporal se eliminó tras el intento; no quedó instancia ni base creada.
+
+### Configuración y migraciones
+
+- Django usa `config.settings.development` por defecto; `DATABASE_URL` es obligatorio y solo acepta `postgres`/`postgresql`.
+- En tests, `config.settings.test` mantiene PostgreSQL y `DATABASE_TEST_NAME`; no existe fallback a SQLite.
+- `makemigrations --check --dry-run` informa **sin cambios pendientes**. La comprobación de historial no pudo conectarse al servidor, por la limitación indicada.
+- Las únicas migraciones de dominio son `accounts.0001_initial` y `households.0001_initial`; no se añadieron módulos financieros.
+- Se corrigió el parser de `DATABASE_URL` para admitir el parámetro estándar `?host=/ruta/del/socket&port=...`, útil para ejecución aislada local/CI.
+
+### Resultado de pruebas real
+
+| Grupo | Resultado | Evidencia |
+|---|---|---|
+| Configuración sin DB | 3 aprobadas | PostgreSQL obligatorio, rechazo de SQLite y socket Unix |
+| OpenAPI | 1 aprobada | `/api/v1/schema/` responde y declara `Gastio API` |
+| Usuario, salud, hogares, membresías y roles | 5 con error de infraestructura | El runner no puede crear la DB de tests porque PostgreSQL no acepta conexiones |
+| Suite Django total | **4 aprobadas, 5 errores, 0 fallos de aserción** | `OperationalError: connection ... Operation not permitted` |
+| Ruff / Black | Correctos | Revisión de todo `backend/` |
+| Producción | Correcto en revisión de configuración | `DEBUG=False`, cookies de sesión/CSRF seguras y HTTPS activo |
+
+Los cinco casos pendientes cubren usuario personalizado, health con consulta real, usuario sin membresía, aislamiento de consulta de un usuario multi-hogar y denegación de administración a rol limitado. No se obtuvo un resultado funcional de esos casos todavía: todos se detienen antes de ejecutar por la conexión PostgreSQL.
+
+### Seguridad y aislamiento revisados
+
+- El tenant se resuelve en `resolve_active_membership()` con usuario autenticado, UUID válido y membresía `active` antes de consultar datos del hogar.
+- Un no miembro recibe `404` para reducir enumeración; la falta de permiso de operación produce `403`; las respuestas de error son envoltorios genéricos sin payload tenant.
+- `tenant_queryset()` impone `household_id` sobre la consulta, y `HasHouseholdPermission` guarda solamente la membresía validada en el request. Angular no participa en esa decisión.
+- Las pruebas implementadas incluyen no miembro, membresía multi-hogar y rol de carga limitada; su ejecución contra PostgreSQL sigue pendiente por el bloqueo de infraestructura.
+- Autenticación de sesión con cookies `HttpOnly` y `SameSite=Lax`; el interceptor frontend envía CSRF solo en mutaciones. No hay endpoint de login en Fase 0.
+- Producción fuerza `DEBUG=False`, HTTPS, HSTS y cookies seguras. Como corrección de auditoría, ahora rechaza `*` en `CORS_ALLOWED_ORIGINS` y `CSRF_TRUSTED_ORIGINS`.
+
+### Entorno aislado reproducible
+
+En una máquina Fedora con PostgreSQL en ejecución, crear exclusivamente el rol temporal de test. La contraseña se toma de una variable de entorno, nunca se guarda en el repositorio:
+
+```bash
+export GASTIO_TEST_DB_PASSWORD='generar-una-clave-larga-y-unica'
+sudo -u postgres psql -v ON_ERROR_STOP=1 -v db_password="$GASTIO_TEST_DB_PASSWORD" <<'SQL'
+CREATE ROLE gastio_phase0_test LOGIN PASSWORD :'db_password' NOSUPERUSER NOCREATEROLE NOBYPASSRLS NOINHERIT CREATEDB;
+SQL
+```
+
+`CREATEDB` es el único privilegio adicional requerido para que Django cree y elimine su base efímera `gastio_phase0_test`. El rol no tiene superusuario, administración de roles ni acceso concedido a otras bases. Luego:
+
+```bash
+export DATABASE_URL="postgresql://gastio_phase0_test:${GASTIO_TEST_DB_PASSWORD}@127.0.0.1:5432/postgres"
+export DATABASE_TEST_NAME=gastio_phase0_test
+export DJANGO_SECRET_KEY='solo-para-tests-locales'
+.venv/bin/python -m pytest -c backend/pyproject.toml backend
+.venv/bin/python backend/manage.py showmigrations accounts households
+```
+
+Al finalizar, Django elimina la base de tests. Para retirar el rol temporal:
+
+```bash
+sudo -u postgres psql -c 'DROP ROLE gastio_phase0_test;'
+```
+
+### Limitación histórica y condición de cierre original
+
+El único bloqueo registrado era disponer de PostgreSQL accesible para el usuario ejecutor o de Docker/CI con sockets permitidos. Se resolvió mediante la ejecución posterior de **9/9 pruebas aprobadas**, migraciones aplicadas y health verificado con PostgreSQL real.
+
+## Evidencia de verificación previa
 
 Ejecutado el 2026-10-08:
 

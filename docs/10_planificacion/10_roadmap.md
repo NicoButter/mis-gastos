@@ -4,7 +4,7 @@
 
 | Fase | Entregable | Criterios de salida |
 |---|---|---|
-| 0 | Scaffolding monorepo, configs, env, CI, salud y README | Backend/frontend arrancan, PostgreSQL conecta, tests base verdes |
+| 0 ✓ Completada | Scaffolding monorepo, configs, env, CI, salud y README | Backend/frontend arrancan, PostgreSQL conecta, tests base verdes (9/9 backend con PostgreSQL 18.6) |
 | 1 | Usuarios, hogares, memberships y permisos | Dos hogares aislados; invitaciones y roles probados |
 | 2 | Cuentas, categorías, transacciones/ledger, listado | Importes consistentes, idempotencia y pruebas cruzadas |
 | 3 | Carga rápida móvil y dashboard básico | Flujo responsive real, estados de error, balance confiable |
@@ -13,6 +13,13 @@
 | 6 | Staging, performance, seguridad y revisión integral | Checklist preproducción, backup/restore, datos sintéticos |
 | V1 | Recurrentes, cierre diario, objetivos y exportaciones | Especificar nuevos RF antes de construir |
 | Futuro | IA, OCR, offline, pagos SaaS, bancos | ADR, análisis legal/seguridad y priorización comercial |
+
+## Cierre de Fase 0
+
+- Cerrada el 2026-10-08 tras validar `python -m pytest -v`: 9 aprobadas, 0 fallidas en 1.60 s, sobre PostgreSQL 18.6 y `gastio_db`.
+- `python manage.py check` no reportó problemas y las migraciones iniciales quedaron aplicadas.
+- El runner oficial permanece en pytest; `manage.py test` no interpreta los marcadores ni la configuración de `pytest-django` de la suite actual.
+- Sin bloqueos técnicos para iniciar Fase 1. ADR-003 se debe ratificar antes de construir los flujos de autenticación e invitaciones.
 
 ## Backlog inicial
 

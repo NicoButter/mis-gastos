@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
@@ -25,13 +25,19 @@ def database_from_env() -> dict[str, object]:
     parsed = urlparse(raw_url)
     if parsed.scheme not in {"postgres", "postgresql"}:
         raise RuntimeError("DATABASE_URL must use a PostgreSQL URL.")
+    query = parse_qs(parsed.query)
+    # PostgreSQL accepts a Unix socket directory in the conventional URL query
+    # parameter. This is useful for local/CI isolation without weakening the
+    # PostgreSQL-only requirement.
+    host = query.get("host", [parsed.hostname or ""])[0]
+    port = query.get("port", [str(parsed.port or "5432")])[0]
     return {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": parsed.path.lstrip("/"),
         "USER": parsed.username or "",
         "PASSWORD": parsed.password or "",
-        "HOST": parsed.hostname or "",
-        "PORT": parsed.port or "5432",
+        "HOST": host,
+        "PORT": port,
         "CONN_MAX_AGE": 60,
     }
 
