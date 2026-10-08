@@ -1,0 +1,9 @@
+{
+  "name": "Gastio",
+  "short_name": "Gastio",
+  "theme_color": "#0f766e",
+  "background_color": "#f8fafc",
+  "display": "standalone",
+  "start_url": "/",
+  "description": "Administración de finanzas personales y familiares."
+}
