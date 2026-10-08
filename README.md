@@ -37,18 +37,12 @@ Requisitos en Fedora: Python 3.14, Node 22.23+, PostgreSQL 17 y opcionalmente Re
 cp .env.example .env
 docker compose -f infra/docker-compose.yml up -d  # alternativa: servicios locales
 ./scripts/setup.sh
-set -a; source .env; set +a
-.venv/bin/python backend/manage.py migrate
-./scripts/run-backend.sh
+./scripts/dev-start.sh
 ```
 
-En otra terminal:
+`dev-start.sh` carga `.env`, comprueba Django y la conexión a PostgreSQL, aplica las migraciones pendientes y levanta el backend y el frontend con logs identificados. Con `Ctrl+C` detiene ambos procesos. No instala ni inicia servicios del sistema; PostgreSQL debe estar disponible antes de ejecutarlo. La API de salud queda en `http://127.0.0.1:8000/api/v1/health/` y la interfaz en `http://localhost:4200/`.
 
-```bash
-npm --prefix frontend start
-```
-
-La API de salud queda en `http://127.0.0.1:8000/api/v1/health/` y la interfaz en `http://localhost:4200/`.
+Redis y Celery son opcionales en la Fase 0 y no se inician mediante ese script. Para levantar los servicios manualmente y conservar los logs separados, se puede seguir usando `./scripts/run-backend.sh` y `npm --prefix frontend start` en terminales distintas.
 
 Para verificaciones reproducibles:
 
@@ -60,4 +54,4 @@ set -a; source .env; set +a
 npm --prefix frontend run build
 ```
 
-La configuración requiere `DATABASE_URL` PostgreSQL de forma explícita y no usa SQLite como alternativa. Consultá el [estado de implementación](docs/10_planificacion/estado_implementacion.md) para decisiones, supuestos y evidencia.
+La configuración requiere `DATABASE_URL` PostgreSQL de forma explícita y no usa SQLite como alternativa. Consultá el [estado de implementación](docs/10_planificacion/estado_implementacion.md) para decisiones, supuestos y evidencia. La configuración de Google OAuth/OIDC, incluido el callback exacto y Google Cloud, está en [la guía de autenticación](docs/07_seguridad/08_google_oauth.md).

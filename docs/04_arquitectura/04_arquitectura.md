@@ -74,3 +74,20 @@ Request ID + user ID + household ID (sin datos sensibles), métricas de latencia
 - ADR-003: autenticación SPA (cookies/sesión vs tokens) y estrategia CSRF.
 - ADR-004: modo offline en evolución posterior.
 - ADR-005: planes/licenciamiento sin contaminación de dominio financiero.
+
+## Iteración 0.5 · Shell web, rutas y autenticación futura
+
+El frontend usa Angular Router con tres layouts independientes: `PublicLayout` contiene la landing en `/`; `AuthLayout` contiene `/login`; y `AppLayout` contiene las rutas privadas bajo `/app`. Los componentes de marketing y cada vista privada se cargan de forma diferida cuando corresponde.
+
+| Grupo | Rutas |
+|---|---|
+| Públicas | `/`, `/login`, `/**` (404) |
+| Privadas | `/app`, `/app/quick`, `/app/transactions`, `/app/accounts`, `/app/households`, `/app/settings` |
+
+`AuthService` expone el contrato de sesión, usuario y hogar activo, pero su estado inicial explícito es anónimo: no consulta un endpoint que todavía no existe ni almacena tokens en el navegador. El guard protege tanto el shell como sus hijos y redirige al visitante a `/login?returnUrl=…`; solo se conserva un destino interno que comienza por `/app`, para evitar redirecciones abiertas.
+
+OAuth/OIDC con Google no forma parte de esta iteración. Django/Allauth deberá implementar el inicio, cierre y consulta de sesión mediante cookies `HttpOnly`; Angular hidratará `AuthService` desde `/api/v1/auth/me/` y no desde `localStorage`.
+
+## Iteración 0.6 · Sesión OAuth/OIDC con Google
+
+La decisión ADR-003 queda implementada para el cliente web: Django Allauth administra OAuth/OIDC Google y la sesión de servidor; Angular sólo solicita CSRF, inicia un `POST` de navegador y consulta `/api/v1/auth/me/`. El proxy de desarrollo conserva `localhost` como host para que Allauth genere el callback `http://localhost:8000/accounts/google/login/callback/`. La selección de hogar queda en la sesión únicamente después de resolver una membresía activa en backend; el onboarding crea de forma explícita un hogar y su membresía owner en una transacción. La configuración y operación se detallan en `docs/07_seguridad/08_google_oauth.md`.

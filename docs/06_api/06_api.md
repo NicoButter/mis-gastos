@@ -8,7 +8,7 @@ Base `/api/v1/`; JSON; autenticación obligatoria salvo endpoints públicos; Ope
 |---|---|---|
 | GET | `/auth/me/` | Usuario y membresías |
 | POST | `/auth/logout/` | Cerrar sesión |
-| GET/POST | `/households/` | Listar/crear hogar |
+| POST | `/households/` | Crear explícitamente el primer hogar y su membresía owner durante onboarding |
 | GET/PATCH | `/households/{hid}/` | Consultar/editar hogar |
 | GET/POST | `/households/{hid}/invitations/` | Invitaciones |
 | POST | `/invitations/{token}/accept/` | Aceptar invitación (token tratado como secreto) |
@@ -26,6 +26,9 @@ Base `/api/v1/`; JSON; autenticación obligatoria salvo endpoints públicos; Ope
 | GET/POST | `/households/{hid}/budgets/` | Presupuestos |
 | GET | `/households/{hid}/dashboard/?from=&to=` | Resumen del hogar |
 | GET | `/health/` | Salud básica sin datos privados |
+| GET | `/auth/config/` | Disponibilidad no sensible de Google OAuth |
+| GET | `/auth/csrf/` | Entrega/fija token CSRF |
+| POST | `/auth/active-household/` | Selecciona hogar activo validado por servidor |
 
 ## Ejemplo de gasto
 

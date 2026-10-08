@@ -5,6 +5,8 @@
 | Fase | Entregable | Criterios de salida |
 |---|---|---|
 | 0 ✓ Completada | Scaffolding monorepo, configs, env, CI, salud y README | Backend/frontend arrancan, PostgreSQL conecta, tests base verdes (9/9 backend con PostgreSQL 18.6) |
+| 0.5 ✓ Completada | Landing pública, rutas SaaS y preparación OAuth | Navegación pública, 404, rutas privadas protegidas y frontend verificado |
+| 0.6 En validación externa | Google OAuth/OIDC con Allauth y sesión Django | Credenciales reales, callback Google y suite PostgreSQL pendientes de ejecutar fuera del sandbox |
 | 1 | Usuarios, hogares, memberships y permisos | Dos hogares aislados; invitaciones y roles probados |
 | 2 | Cuentas, categorías, transacciones/ledger, listado | Importes consistentes, idempotencia y pruebas cruzadas |
 | 3 | Carga rápida móvil y dashboard básico | Flujo responsive real, estados de error, balance confiable |
@@ -20,6 +22,19 @@
 - `python manage.py check` no reportó problemas y las migraciones iniciales quedaron aplicadas.
 - El runner oficial permanece en pytest; `manage.py test` no interpreta los marcadores ni la configuración de `pytest-django` de la suite actual.
 - Sin bloqueos técnicos para iniciar Fase 1. ADR-003 se debe ratificar antes de construir los flujos de autenticación e invitaciones.
+
+## Iteración 0.5 · Landing y rutas
+
+- Cerrada el 2026-10-08: landing en `/`, login en `/login`, 404 explícito y shell privado bajo `/app`.
+- La integración Google OAuth/OIDC no se implementó: `AuthService` deja el estado anónimo y reserva el contrato de sesión para Django/Allauth.
+- Verificado con `npm --prefix frontend run lint`, `npm --prefix frontend test -- --reporters=verbose` (6 pruebas) y `npm --prefix frontend run build`.
+
+## Iteración 0.6 · Autenticación Google
+
+- Implementada sobre `django-allauth` 65.x: sesión Django/CSRF, PKCE, `state`, scopes mínimos `openid email profile` y sin JWT ni almacenamiento web de tokens.
+- Se añadieron los endpoints de sesión, cierre, CSRF, capacidad de configuración y selección de hogar validada; el adaptador impide unir identidades por coincidencia de email.
+- La verificación OAuth real requiere cargar las dos credenciales de Google Cloud y registrar exactamente `http://localhost:8000/accounts/google/login/callback/`.
+- No se marca como cerrada hasta ejecutar migraciones Allauth y pytest completo contra PostgreSQL accesible, además de la prueba manual real. Véase `docs/07_seguridad/08_google_oauth.md`.
 
 ## Backlog inicial
 

@@ -49,6 +49,66 @@ set -a; source .env; set +a
 
 No queda un riesgo técnico bloqueante para iniciar Fase 1. Como decisión de diseño ya identificada, ADR-003 (política final de autenticación SPA/cookies/CSRF) debe ratificarse antes de implementar los flujos de registro, inicio de sesión e invitaciones de esa fase.
 
+## Iteración 0.5 — Landing pública y rutas
+
+**Estado: COMPLETADA.** Esta iteración no altera el alcance ni el cierre de Fase 0, y no incorpora modelos, endpoints financieros ni OAuth.
+
+### Rutas definitivas
+
+| Ruta | Acceso | Componente / propósito |
+|---|---|---|
+| `/` | Público | Landing de Gastio |
+| `/login` | Público | Estado de acceso futuro con Google deshabilitado |
+| `/app` | Protegido | Dashboard vacío existente |
+| `/app/quick` | Protegido | Modo rápido estructural |
+| `/app/transactions` | Protegido | Placeholder de movimientos |
+| `/app/accounts` | Protegido | Placeholder de cuentas |
+| `/app/households` | Protegido | Placeholder de hogares |
+| `/app/settings` | Protegido | Placeholder de configuración |
+| `/**` | Público | Página 404 explícita |
+
+Se separaron `PublicLayout`, `AuthLayout` y `AppLayout`; las vistas de marketing y privadas se cargan de forma diferida. El guard redirige visitantes de `/app/**` a `/login`, preservando solo una URL interna segura bajo `/app`. No existe bypass de desarrollo ni sesión simulada.
+
+`AuthService` declara los contratos futuros `/api/v1/auth/me/` y `/api/v1/auth/logout/`, junto con usuario y hogar activo, pero mantiene estado anónimo explícito hasta que Django/Allauth implemente OAuth/OIDC y sesiones de cookie. No se almacenan tokens en `localStorage`.
+
+### Verificación de la iteración
+
+- `npm --prefix frontend run lint`: correcto.
+- `npm --prefix frontend test -- --reporters=verbose`: **2 archivos, 6 pruebas aprobadas**.
+- `npm --prefix frontend run build`: correcto, con landing y vistas privadas como chunks lazy.
+
+Inspección manual: `npm --prefix frontend start` y abrir `http://localhost:4200`. Verificar navbar/secciones, modo móvil a 360 px, `/login`, `/app/transactions` como visitante y una URL inexistente.
+
+### Riesgos y dependencias
+
+- La autenticación, registro, invitaciones y selección persistente de hogar permanecen fuera de alcance hasta Fase 1 y la ratificación de ADR-003.
+- El botón Google se mantiene deshabilitado hasta que exista configuración real de Django Allauth y Google Cloud; no hay callbacks, credenciales ni flujos simulados.
+
+## Iteración 0.6 — Google OAuth/OIDC
+
+**Estado: implementada, pendiente de validación externa.** Se incorporó `django-allauth` 65.19.x con proveedor Google y el modelo `accounts.User` existente. La aplicación usa sesión de Django con cookies `HttpOnly`, CSRF y OAuth web: no hay JWT ni secretos/tokens en Angular.
+
+| Área | Implementación |
+|---|---|
+| Inicio OAuth | `POST /accounts/google/login/` protegido por CSRF, con `state` y PKCE de Allauth; no se habilitó `SOCIALACCOUNT_LOGIN_ON_GET`. |
+| Callback | `http://localhost:8000/accounts/google/login/callback/`, redirección posterior a `GASTIO_FRONTEND_URL/app`. |
+| Sesión | `GET /api/v1/auth/me/`, restaurada al iniciar Angular; `POST /api/v1/auth/logout/` invalida la sesión y exige CSRF. |
+| Tenant | Sólo membresías activas se exponen; `POST /api/v1/auth/active-household/` verifica la membresía antes de guardar la selección en sesión. |
+| Identidad social | La identidad estable Google (`uid`) se reutiliza. Una coincidencia de email sin identidad previamente vinculada se rechaza: no hay toma automática de cuentas. |
+| Credenciales | `GOOGLE_OAUTH_CLIENT_ID` y `GOOGLE_OAUTH_CLIENT_SECRET` sólo se leen de entorno. `/auth/config/` informa únicamente si ambas existen. |
+
+Se agregaron pruebas de CSRF, sesión anónima/autenticada, logout, membresías activas, aislamiento de selección de hogar, reutilización de identidad social y política anti-vinculación por email. No hacen llamadas a Google.
+
+### Verificación de esta iteración
+
+- `python backend/manage.py check`: correcto con `.env` cargado.
+- `ruff check backend`: correcto.
+- `npm --prefix frontend run lint` y `npm --prefix frontend run build`: correctos.
+- `black --check backend`: no concluido en este sandbox: Python 3.14 no puede crear el proceso auxiliar por `PermissionError: Operation not permitted`.
+- `pytest --collect-only`: **18 pruebas** recogidas correctamente. Pytest completo, migraciones Allauth y prueba manual OAuth real siguen pendientes porque, durante esta ejecución, PostgreSQL no aceptó conexiones (`psycopg.OperationalError: connection is bad`) y no se suministraron credenciales Google reales.
+
+La guía completa, configuración exacta de Google Cloud, endpoints, cookies, CSRF, migraciones y procedimiento manual está en `docs/07_seguridad/08_google_oauth.md`.
+
 ## Auditoría de cierre previa — contexto del sandbox
 
 La siguiente evidencia se conserva como registro de la auditoría realizada en un sandbox que impedía conexiones PostgreSQL. Esa limitación quedó resuelta por la ejecución posterior confirmada anteriormente; no describe el estado final de Fase 0.

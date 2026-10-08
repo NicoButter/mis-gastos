@@ -9,4 +9,4 @@ if [[ -f .env ]]; then
   source .env
   set +a
 fi
-exec .venv/bin/python backend/manage.py runserver 127.0.0.1:8000
+exec .venv/bin/python backend/manage.py runserver localhost:8000
