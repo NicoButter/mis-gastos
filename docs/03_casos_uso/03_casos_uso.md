@@ -70,3 +70,10 @@ flowchart LR
 ## CU-12 · Cierre diario (V1)
 
 Propone resumen del día, agrega olvidos, marca revisado; los registros continúan siendo editables con auditoría.
+
+## Incremento financiero operativo · 2026-10-09
+
+CU-05/06/07 y la consulta financiera de CU-11 funcionan mediante API y Angular;
+la parte de presupuestos de CU-11 sigue pendiente. Alta de cuentas registra apertura
+diferenciada; corrección añade revisión auditada; anulación conserva historial.
+[Guion manual con saldos esperados](../10_planificacion/11_nucleo_financiero.md#ux-y-recorrido-manual).

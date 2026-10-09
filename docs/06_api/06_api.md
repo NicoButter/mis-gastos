@@ -32,6 +32,17 @@ Base `/api/v1/`; JSON; autenticación obligatoria salvo endpoints públicos; Ope
 
 ## Ejemplo de gasto
 
+### Contrato implementado · Fase 1 financiera
+
+Las rutas financieras propuestas arriba eran conceptuales. El contrato vigente usa
+`/api/v1/accounts/`, `/categories/`, `/transactions/`, `/transfers/` y
+`/dashboard/summary/`, con hogar autorizado desde la sesión y campos snake_case.
+En el body se usa `description` (no `note`), la moneda se deriva de la cuenta;
+`Idempotency-Key` UUID es obligatorio para todas las escrituras financieras.
+PATCH/void usa `expected_revision`; auditoría en `transactions/{id}/history/`.
+Listas paginadas 25, máximo 100; detalles/filtros/códigos en
+[contrato operativo](../10_planificacion/11_nucleo_financiero.md#api-implementada).
+
 ```json
 POST /api/v1/households/{hid}/transactions/
 Idempotency-Key: 8c04...UUID

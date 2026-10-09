@@ -38,6 +38,14 @@
 
 ## Backlog inicial
 
+### Reagrupación autorizada · 2026-10-09
+
+La nueva **Fase 1 financiera** reúne cuentas/categorías/ledger (antigua fase 2),
+carga rápida/dashboard (antigua fase 3) y auditoría del núcleo. Las invitaciones y
+ACL/carga limitada de la fase 1 original siguen pendientes, así como tarjetas,
+presupuestos y staging; no se declara todo el MVP terminado.
+[Alcance implementado](11_nucleo_financiero.md).
+
 **Épica E-01 Plataforma**: scripts start/test/lint, settings dev/prod, OpenAPI, logging, health, CI.
 
 **E-02 Tenant**: Household + Membership; backend permission service; invitación; selección hogar; pruebas contra IDOR.

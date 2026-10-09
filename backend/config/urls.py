@@ -13,6 +13,7 @@ from apps.accounts.views import (
 from apps.households.views import HealthView
 
 urlpatterns = [
+    path("api/v1/", include("apps.transactions.urls")),
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("api/v1/auth/csrf/", CsrfView.as_view(), name="auth-csrf"),

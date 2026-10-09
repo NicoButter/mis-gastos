@@ -1,5 +1,40 @@
 # Estado de implementación — Fase 0
 
+## Estado vigente · Fase 1 financiera · 2026-10-09
+
+Núcleo financiero implementado de punta a punta: cuentas compartidas ARS,
+categorías por hogar, ingreso/gasto/transferencia, ledger derivado por revisiones,
+corrección/anulación auditada, idempotencia y aislamiento. Pantallas Angular reales
+en `/app/accounts`, `/app/categories`, `/app/transactions`, `/app/quick` y `/app`.
+OAuth, avatar, sesión y hogares existentes se conservan.
+
+| Validación ejecutada | Resultado |
+|---|---|
+| pytest en PostgreSQL local, `config.settings.test`, `gastio_test` | 43 aprobadas; incluye concurrencia real, triggers, atomicidad, permisos y aislamiento |
+| Angular TestBed/Vitest | 19 aprobadas en 4 archivos |
+| Django check / makemigrations check | sin problemas / sin cambios pendientes |
+| OpenAPI `spectacular --validate --fail-on-warn` | válido, sin errores ni warnings de generación |
+| Ruff / Black | aprobados |
+| Angular lint / build producción | aprobados; bundle inicial ~343 kB |
+| Migraciones financieras en gastio_db | aditivas; identidad y sesiones preservadas |
+
+PostgreSQL requirió acceso fuera del sandbox. Durante el desarrollo una primera
+ejecución de pruebas falló por preparación de sesión al cambiar usuario y otra
+detectó un error al validar un JSON que no era objeto; ambos fueron corregidos.
+La evidencia final no usa esas ejecuciones parciales como aprobación. Pytest emite
+dos avisos de deprecación de drf-spectacular en Python 3.14, sin fallos funcionales.
+
+No se crearon cuentas ni movimientos de demostración en gastio_db; se agregaron
+18 categorías sugeridas por hogar. Sin flush, recreación de base ni reinicio de PostgreSQL.
+Limitaciones: no hay navegador conectado para E2E/QA visual a 360px; no se midió
+p95/performance ni conformidad WCAG integral. Carga limitada/cuentas privadas,
+invitaciones, tarjetas y presupuestos siguen fuera de este incremento. El bloqueo
+por hogar deberá medirse en un piloto. No se realizó commit ni push.
+
+[Informe completo, ADR, migraciones, endpoints y prueba manual](11_nucleo_financiero.md).
+
+Los apartados siguientes conservan la evidencia histórica de las fases anteriores.
+
 **Fecha:** 2026-10-08  
 **Alcance ejecutado:** fundación técnica; no se implementaron entidades ni operaciones financieras.
 

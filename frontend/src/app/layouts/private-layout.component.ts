@@ -20,12 +20,24 @@ import { AuthService } from '../core/auth.service';
           <a routerLink="quick" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block rounded-lg px-3 py-2 font-medium">Modo rápido</a>
           <a routerLink="transactions" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block rounded-lg px-3 py-2 font-medium">Movimientos</a>
           <a routerLink="accounts" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block rounded-lg px-3 py-2 font-medium">Cuentas</a>
+          <a routerLink="categories" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block rounded-lg px-3 py-2 font-medium">Categorías</a>
           <a routerLink="households" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block rounded-lg px-3 py-2 font-medium">Hogares</a>
           <a routerLink="settings" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block rounded-lg px-3 py-2 font-medium">Configuración</a>
         </nav>
-        <div class="absolute inset-x-5 bottom-6 border-t border-slate-200 pt-4 text-sm dark:border-slate-700"><p class="font-semibold">{{ auth.currentUser()?.displayName }}</p><p class="text-slate-500">{{ auth.currentUser()?.email }}</p><button type="button" (click)="logout()" class="mt-3 font-semibold text-brand-700 dark:text-teal-300">Cerrar sesión</button></div>
+        @if (auth.currentUser(); as user) {
+          <div class="absolute inset-x-5 bottom-6 border-t border-slate-200 pt-4 text-sm dark:border-slate-700">
+            <div class="flex items-center gap-3">
+              <span class="relative grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-100 font-bold text-brand-700 dark:bg-slate-800 dark:text-teal-300" aria-hidden="true">
+                {{ initials(user.displayName) }}
+                @if (user.avatarUrl) { <img [src]="user.avatarUrl" [alt]="'Foto de ' + user.displayName" class="absolute inset-0 size-full object-cover" (error)="$any($event.target).remove()" /> }
+              </span>
+              <div class="min-w-0"><p class="truncate font-semibold">{{ user.displayName }}</p><p class="truncate text-slate-500">{{ user.email }}</p></div>
+            </div>
+            <button type="button" (click)="logout()" class="mt-3 font-semibold text-brand-700 dark:text-teal-300">Cerrar sesión</button>
+          </div>
+        }
       </aside>
-      <main class="min-h-screen p-5 lg:ml-72 lg:p-10"><router-outlet /></main>
+      <main class="min-h-screen p-5 pb-24 lg:ml-72 lg:p-10"><router-outlet /></main>
       <nav class="fixed inset-x-0 bottom-0 z-10 flex justify-around border-t border-slate-200 bg-white p-2 text-sm dark:border-slate-800 dark:bg-slate-900 lg:hidden" aria-label="Navegación móvil"><a routerLink="/app" class="p-2">Panel</a><a routerLink="quick" class="rounded-lg bg-brand-600 px-4 py-2 font-bold text-white">+ Gasto</a></nav>
     </div>
   `,
@@ -43,5 +55,14 @@ export class PrivateLayoutComponent {
 
   protected async selectHousehold(householdId: string): Promise<void> {
     if (householdId) await this.auth.selectHousehold(householdId);
+  }
+
+  protected initials(displayName: string): string {
+    return displayName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('');
   }
 }

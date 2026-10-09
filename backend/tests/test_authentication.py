@@ -9,11 +9,28 @@ from rest_framework.test import APIClient
 
 from apps.accounts.adapters import GastioSocialAccountAdapter
 from apps.accounts.models import User
+from apps.accounts.views import google_avatar_url
 from apps.households.models import Household, HouseholdMembership
 
 
 def test_allauth_is_configured_for_the_username_free_user_model():
     assert allauth_account_settings.USER_MODEL_USERNAME_FIELD is None
+
+
+@pytest.mark.parametrize(
+    ("extra_data", "expected"),
+    [
+        (
+            {"picture": "https://lh3.googleusercontent.com/a/photo"},
+            "https://lh3.googleusercontent.com/a/photo",
+        ),
+        ({"picture": "http://lh3.googleusercontent.com/a/photo"}, None),
+        ({"picture": "https://example.com/avatar.png"}, None),
+        ({}, None),
+    ],
+)
+def test_google_avatar_url_only_accepts_google_https_callback_urls(extra_data, expected):
+    assert google_avatar_url(extra_data) == expected
 
 
 def test_csrf_endpoint_sets_a_cookie_without_exposing_secrets():
@@ -33,6 +50,12 @@ def test_me_requires_a_django_session():
 @pytest.mark.django_db
 def test_me_returns_only_active_memberships_and_server_validated_active_household():
     user = User.objects.create_user("member@example.com", "password")
+    SocialAccount.objects.create(
+        user=user,
+        provider="google",
+        uid="google-subject-1",
+        extra_data={"picture": "https://lh3.googleusercontent.com/a/photo"},
+    )
     active = Household.objects.create(name="Hogar activo")
     revoked = Household.objects.create(name="Hogar revocado")
     HouseholdMembership.objects.create(user=user, household=active)
@@ -46,6 +69,7 @@ def test_me_returns_only_active_memberships_and_server_validated_active_househol
 
     assert response.status_code == 200
     assert response.json()["user"]["id"] == str(user.id)
+    assert response.json()["user"]["avatarUrl"] == "https://lh3.googleusercontent.com/a/photo"
     assert response.json()["households"] == [
         {"id": str(active.id), "name": "Hogar activo", "role": "member"}
     ]

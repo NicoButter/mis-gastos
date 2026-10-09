@@ -12,3 +12,11 @@ html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; background: light-dark(#f8fafc, #0f172a); color: light-dark(#172033, #e2e8f0); }
 button, a, input { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid #14b8a6; outline-offset: 3px; }
+
+.finance-card { @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900; }
+.form-input { @apply mt-1 block w-full min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-3 text-base dark:border-slate-700 dark:bg-slate-950; }
+.btn-primary { @apply inline-flex items-center justify-center rounded-xl bg-brand-700 px-5 py-3 font-bold text-white disabled:cursor-not-allowed disabled:opacity-50; }
+.notice-error { @apply mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-red-800 dark:bg-red-950 dark:text-red-200; }
+.notice-success { @apply mt-4 rounded-xl border border-teal-200 bg-teal-50 p-4 text-teal-800 dark:bg-teal-950 dark:text-teal-200; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .6; }

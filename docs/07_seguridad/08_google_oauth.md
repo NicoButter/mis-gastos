@@ -68,7 +68,7 @@ El proxy de desarrollo Angular reenvía `/api` y `/accounts` al backend y preser
 - Scopes limitados a `openid`, `email` y `profile`; `access_type=online`, sin refresh token y sin permisos de Gmail, Drive o Calendar.
 - PKCE y `state` están habilitados por el proveedor Google de Allauth. La sesión guarda el estado de transacción; no usar sesiones firmadas por cookie.
 - Sólo la identidad social estable (`provider=google`, `uid=sub`) reutiliza una cuenta. Un email existente sin esa identidad no se vincula automáticamente y vuelve al login con un error genérico.
-- El usuario creado conserva el UUID del modelo propio, usa email/nombre/apellido provistos por Google y una contraseña inutilizable. El modelo actual no tiene avatar, por lo que la foto no se persiste.
+- El usuario creado conserva UUID, email/nombre/apellido y contraseña inutilizable. La foto se conserva en `SocialAccount.extra_data.picture`; `/auth/me/` expone `avatarUrl` sólo si es HTTPS de googleusercontent.com. Angular muestra iniciales si falta/falla. `ACCOUNT_USER_MODEL_USERNAME_FIELD=None` corresponde al modelo sin username.
 - La sesión autentica; la membresía autoriza. `/auth/me/` expone sólo membresías activas y la selección de hogar se valida en servidor. Un usuario sin hogares va a onboarding; sólo allí puede crear explícitamente el primero y su membresía `owner` en una transacción.
 - Desarrollo usa cookies `HttpOnly`, `SameSite=Lax`, `CSRF_TRUSTED_ORIGINS=http://localhost:4200` y allowlist CORS. Producción fuerza HTTPS y cookies `Secure`, y rechaza `DEBUG` y comodines CORS/CSRF.
 

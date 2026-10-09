@@ -28,8 +28,9 @@ export const appRoutes: Routes = [
   {
     path: 'app', component: PrivateLayoutComponent, canActivate: [authGuard], canActivateChild: [authChildGuard], children: [
       { path: 'quick', title: 'Modo rápido | Gastio', loadComponent: () => import('./features/home/quick-mode-page.component').then((m) => m.QuickModePageComponent) },
-      { path: 'transactions', title: 'Movimientos | Gastio', data: { title: 'Movimientos', detail: 'El historial de movimientos se habilitará en la fase financiera.' }, loadComponent: () => import('./features/home/app-placeholder-page.component').then((m) => m.AppPlaceholderPageComponent) },
-      { path: 'accounts', title: 'Cuentas | Gastio', data: { title: 'Cuentas', detail: 'La administración de cuentas se habilitará en la fase financiera.' }, loadComponent: () => import('./features/home/app-placeholder-page.component').then((m) => m.AppPlaceholderPageComponent) },
+      { path: 'transactions', title: 'Movimientos | Gastio', loadComponent: () => import('./features/finance/transactions-page.component').then((m) => m.TransactionsPageComponent) },
+      { path: 'accounts', title: 'Cuentas | Gastio', loadComponent: () => import('./features/finance/accounts-page.component').then((m) => m.AccountsPageComponent) },
+      { path: 'categories', title: 'Categorías | Gastio', loadComponent: () => import('./features/finance/categories-page.component').then((m) => m.CategoriesPageComponent) },
       { path: 'households', title: 'Hogares | Gastio', data: { title: 'Hogares', detail: 'La gestión de hogares se habilitará junto a autenticación e invitaciones.' }, loadComponent: () => import('./features/home/app-placeholder-page.component').then((m) => m.AppPlaceholderPageComponent) },
       { path: 'settings', title: 'Configuración | Gastio', data: { title: 'Configuración', detail: 'Las preferencias estarán disponibles al conectar la sesión.' }, loadComponent: () => import('./features/home/app-placeholder-page.component').then((m) => m.AppPlaceholderPageComponent) },
       { path: 'dashboard', pathMatch: 'full', redirectTo: '' },

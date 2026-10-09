@@ -121,4 +121,15 @@ UI web/PWA (es-AR); API JSON HTTPS; autenticación basada en sesión segura o me
 
 ## 9. Criterio de aprobación MVP
 
+### Incremento Fase 1 financiera · 2026-10-09
+
+Implementados RF-006..011, RF-017..020 para cuentas compartidas ARS y roles
+owner/admin/member. RNF-001/002/006/007/011/014/015 tienen controles y pruebas;
+RNF-003/004/005 requieren medición y validación visual en dispositivo real.
+RF-004 en su modalidad `limited_entry` con cuentas autorizadas queda pendiente:
+ese rol no accede a finanzas hasta implementar ACL explícitas. No se eliminan
+requisitos de privacidad, invitaciones, tarjetas o presupuestos de otras fases.
+Contratos, trazabilidad y reglas contables en
+[Fase 1 financiera](../10_planificacion/11_nucleo_financiero.md).
+
 MVP aceptado si cada requisito Must funciona de extremo a extremo, las pruebas de aislamiento pasan, el cálculo contable es reproducible, la interfaz móvil pasa accesibilidad base y el deploy staging puede reproducirse siguiendo README.

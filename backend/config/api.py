@@ -17,6 +17,8 @@ def exception_handler(exc, context):
         code = "PERMISSION_DENIED"
     elif response.status_code == 404:
         code = "NOT_FOUND"
+    elif response.status_code == 409:
+        code = "CONFLICT"
     response.data = {
         "error": {
             "code": code,

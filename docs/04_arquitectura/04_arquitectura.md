@@ -57,6 +57,18 @@ La matriz es baseline para implementación; acceso a cuentas privadas y granular
 
 ## Datos financieros
 
+### ADR adoptados en Fase 1 financiera
+
+El tenant financiero efectivo se resuelve desde la sesión, revalidando membresía.
+Las rutas operativas son `/api/v1/accounts/`, `/categories/`, `/transactions/`,
+`/transfers/` y `/dashboard/summary/`, sustituyendo la propuesta de rutas anidadas.
+`X-Household-ID` opcional sólo detecta una pantalla cuyo contexto cambió; no autoriza.
+`wallets.FinancialAccount` evita colisión con `accounts.User`. Servicios atómicos
+serializan escrituras por hogar, guardan recibos idempotentes y entradas inmutables
+por revisión; PostgreSQL verifica consistencia al commit. Cuentas compartidas;
+carga limitada denegada hasta ACL explícitas. Detalle:
+[ADR y ledger](../10_planificacion/11_nucleo_financiero.md#auditoría-y-decisiones).
+
 Separar `Transaction` como evento de negocio y `LedgerEntry` como afectación de saldo/deuda (o diseño equivalente de libro mayor). Una compra con tarjeta crea gasto + obligación, pago de tarjeta reduce cuenta líquida + deuda y transferencia mueve entre cuentas, sin crear consumo adicional. Definir modelo contable exacto antes de migraciones definitivas.
 
 ## Despliegue

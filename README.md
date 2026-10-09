@@ -19,6 +19,10 @@ Gastio es un SaaS multitenant de finanzas personales y familiares, con una exper
 
 ## Convenciones
 
+El núcleo financiero de Fase 1 ya conecta cuentas, categorías, movimientos,
+transferencias, carga rápida y dashboard a PostgreSQL. Ver
+[arquitectura, API y recorrido manual](docs/10_planificacion/11_nucleo_financiero.md).
+
 - **MVP**: entrega inicial; **V1**: incremento posterior; **Futuro**: no autorizado para primera entrega.
 - Requisitos: `RU` usuario, `RF` funcional, `RNF` no funcional, `RS` sistema, `RN` regla de negocio.
 - Prioridad **Must/Should/Could**; cada requisito tiene criterios verificables.

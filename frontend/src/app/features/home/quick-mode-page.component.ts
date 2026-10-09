@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { UiStateComponent } from '../../shared/ui-state.component';
+import { OperationFormComponent } from '../finance/operation-form.component';
 
 @Component({
-  imports: [UiStateComponent],
+  imports: [OperationFormComponent],
   template: `
-    <header><p class="text-sm font-semibold text-brand-700 dark:text-teal-300">Modo rápido</p><h1 class="mt-1 text-3xl font-black">Registrar un gasto</h1><p class="mt-2 text-slate-600 dark:text-slate-300">Flujo móvil preparado para monto, categoría y cuenta.</p></header>
-    <div class="mt-8 max-w-xl"><gst-ui-state label="Estructura lista" title="Aún no registra movimientos" detail="La persistencia se habilitará solo al implementar la fase financiera correspondiente." /></div>
+    <header><p class="text-sm font-semibold text-brand-700">Modo rápido</p><h1 class="mt-1 text-3xl font-black">Registrar un gasto</h1><p class="mt-2 text-slate-500">Importe, categoría y cuenta. Listo.</p></header>
+    <section class="finance-card mt-6 max-w-xl mb-20"><gst-operation-form [quick]="true" /></section>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

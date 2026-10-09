@@ -19,6 +19,15 @@ Principales riesgos: IDOR/BOLA, filtración entre hogares por FK cruzada, escala
 
 ## Controles operativos
 
+### Controles implementados · Fase 1 financiera
+
+Los endpoints resuelven hogar desde sesión y membresía active; el JSON nunca elige
+tenant ni actor. Owner/admin administran; member corrige sólo lo propio; limited_entry
+no accede a datos financieros hasta permisos por cuenta. Todas las FKs se consultan
+en el hogar y PostgreSQL también rechaza cruces. Escrituras atómicas con bloqueo de
+hogar/membresía, idempotencia y revisión esperada. Sesión/CSRF conservados.
+[Reglas y evidencia](../10_planificacion/11_nucleo_financiero.md#modelo-y-garantías).
+
 - Admin de Django restringido; sin visibilidad indiscriminada de datos financieros a soporte.
 - Usuario administrador de plataforma separado de rol de titular de hogar.
 - No volcar datos reales en staging ni tickets; usar datos sintéticos.

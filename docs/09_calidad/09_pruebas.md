@@ -33,4 +33,15 @@
 
 ## Definición de terminado (DoD)
 
+### Cobertura Fase 1 financiera
+
+`backend/tests/test_finance.py` verifica apertura/saldos, gastos/ingresos/transferencias,
+corrección/anulación/auditoría, precisión/fechas, roles/CSRF, aislamiento, filtros,
+dashboard, rollback y escrituras concurrentes idénticas sobre PostgreSQL real.
+También prueba rechazo de ledger parcial/mutable y FKs cruzadas desde ORM.
+Las pruebas Angular de finance verifican formularios, errores, confirmación móvil,
+reintentos/doble envío, refresco y aislamiento de respuestas al cambiar hogar.
+T-01/02/05/06/07/08/14/15 cubiertos; T-16/17 requieren navegador y medición real.
+Resultados y limitaciones en [estado](../10_planificacion/estado_implementacion.md).
+
 Requisito trazado; migración reversible o estrategia documentada; tests de casos felices y negativos; permiso tenant probado; observabilidad sin PII; API documentada; interfaz responsive/accesible; revisión de código; despliegue repetible. Ninguna fase se marca completa con solo endpoints o mockups.

@@ -36,6 +36,10 @@ Gastio ofrece un registro rápido (móvil), una rutina opcional de revisión dia
 
 ## Posterior al MVP
 
+Incremento operativo del 2026-10-09: cuentas compartidas ARS, categorías por hogar,
+ingresos/gastos/transferencias, corrección/anulación auditada, carga rápida y dashboard
+real. Alcance y límites en [Fase 1 financiera](../10_planificacion/11_nucleo_financiero.md).
+
 - **V1:** gastos recurrentes con instancias confirmables, objetivos de ahorro, cierre diario, exportaciones CSV/PDF, notificaciones y más análisis.
 - **Futuro:** sincronización offline, OCR de comprobantes, carga por lenguaje natural, múltiples monedas con tipos de cambio, integraciones bancarias, suscripciones pagas, app nativa.
 

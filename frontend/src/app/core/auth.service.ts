@@ -7,6 +7,7 @@ export interface AuthenticatedUser {
   id: string;
   email: string;
   displayName: string;
+  avatarUrl: string | null;
 }
 
 export interface ActiveHousehold {

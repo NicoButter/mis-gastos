@@ -1,17 +1,31 @@
 from __future__ import annotations
 
+from urllib.parse import urlparse
+
+from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.db import transaction
 from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.categories.services import seed_categories
 from apps.households.models import Household, HouseholdMembership
 from apps.households.services import resolve_active_membership
+
+from .serializers import (
+    AuthConfigurationOutput,
+    CsrfOutput,
+    HouseholdInput,
+    HouseholdSelectionInput,
+    SelectionOutput,
+    SessionOutput,
+)
 
 
 def serialize_membership(membership: HouseholdMembership) -> dict[str, str]:
@@ -22,6 +36,22 @@ def serialize_membership(membership: HouseholdMembership) -> dict[str, str]:
     }
 
 
+def google_avatar_url(extra_data: dict[str, object] | None) -> str | None:
+    """Return only the HTTPS avatar URL received from Google's callback."""
+    picture = extra_data.get("picture") if extra_data else None
+    if not isinstance(picture, str):
+        return None
+    parsed = urlparse(picture)
+    hostname = parsed.hostname
+    if (
+        parsed.scheme != "https"
+        or not hostname
+        or not (hostname == "googleusercontent.com" or hostname.endswith(".googleusercontent.com"))
+    ):
+        return None
+    return picture
+
+
 @method_decorator(ensure_csrf_cookie, name="dispatch")
 class CsrfView(APIView):
     """Sets Django's CSRF cookie before the browser posts to Allauth."""
@@ -29,6 +59,7 @@ class CsrfView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
+    @extend_schema(responses=CsrfOutput)
     def get(self, request):
         return Response({"csrfToken": get_token(request)})
 
@@ -38,7 +69,13 @@ class MeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses=SessionOutput)
     def get(self, request):
+        google_account_data = (
+            SocialAccount.objects.filter(user=request.user, provider="google")
+            .values_list("extra_data", flat=True)
+            .first()
+        )
         memberships = list(
             HouseholdMembership.objects.select_related("household")
             .filter(user=request.user, status=HouseholdMembership.Status.ACTIVE)
@@ -61,11 +98,12 @@ class MeView(APIView):
                     "id": str(request.user.id),
                     "email": request.user.email,
                     "displayName": request.user.get_full_name() or request.user.email,
+                    "avatarUrl": google_avatar_url(google_account_data),
                 },
                 "households": [serialize_membership(item) for item in memberships],
-                "activeHousehold": serialize_membership(active_household)
-                if active_household
-                else None,
+                "activeHousehold": (
+                    serialize_membership(active_household) if active_household else None
+                ),
             }
         )
 
@@ -75,6 +113,7 @@ class ActiveHouseholdView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=HouseholdSelectionInput, responses=SelectionOutput)
     def post(self, request):
         household_id = request.data.get("householdId")
         membership = resolve_active_membership(request.user, household_id)
@@ -87,6 +126,7 @@ class HouseholdCreateView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=HouseholdInput, responses={201: SelectionOutput})
     def post(self, request):
         name = request.data.get("name", "")
         if not isinstance(name, str) or not (name := name.strip()):
@@ -111,6 +151,7 @@ class HouseholdCreateView(APIView):
                 household=household,
                 role=HouseholdMembership.Role.OWNER,
             )
+            seed_categories(household.id)
             request.session["active_household_id"] = str(household.id)
         return Response(
             {"activeHousehold": serialize_membership(membership)}, status=status.HTTP_201_CREATED
@@ -122,6 +163,7 @@ class SessionLogoutView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=None, responses={204: None})
     def post(self, request):
         from django.contrib.auth import logout
 
@@ -135,5 +177,6 @@ class AuthConfigurationView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
 
+    @extend_schema(responses=AuthConfigurationOutput)
     def get(self, request):
         return Response({"googleLoginEnabled": settings.GOOGLE_OAUTH_CONFIGURED})

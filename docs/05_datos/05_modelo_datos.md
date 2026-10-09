@@ -54,6 +54,16 @@ Transaction: `posted|voided` (extensible). Membership: `active|revoked`. Invitat
 
 ## Migraciones iniciales por fase
 
+### Esquema implementado · Fase 1 financiera
+
+La propuesta `Account.opening_balance` se reemplaza por una operación `opening`
+con entradas de ledger; no existe un saldo mutable en cuentas. Implementados
+FinancialAccount, Category, FinancialTransaction, LedgerEntry (revisión), AuditEvent
+y WriteReceipt. Entradas/auditoría/recibos inmutables; sólo revisión vigente posted
+afecta el saldo. Transferencia única con dos entradas. FKs PROTECT, constraints y
+triggers PostgreSQL aseguran forma, signos, tenant y evidencia.
+[Modelo y migraciones](../10_planificacion/11_nucleo_financiero.md#modelo-y-garantías).
+
 1. Identidad y hogares.
 2. Cuentas y categorías.
 3. Transacciones y ledger.
