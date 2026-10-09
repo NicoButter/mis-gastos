@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
 import pytest
+from allauth.account import app_settings as allauth_account_settings
 from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.models import SocialAccount, SocialLogin
 from django.test import override_settings
@@ -9,6 +10,10 @@ from rest_framework.test import APIClient
 from apps.accounts.adapters import GastioSocialAccountAdapter
 from apps.accounts.models import User
 from apps.households.models import Household, HouseholdMembership
+
+
+def test_allauth_is_configured_for_the_username_free_user_model():
+    assert allauth_account_settings.USER_MODEL_USERNAME_FIELD is None
 
 
 def test_csrf_endpoint_sets_a_cookie_without_exposing_secrets():

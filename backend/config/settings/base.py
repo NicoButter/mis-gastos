@@ -144,6 +144,10 @@ GASTIO_FRONTEND_URL = os.getenv("GASTIO_FRONTEND_URL", "http://localhost:4200").
 LOGIN_REDIRECT_URL = f"{GASTIO_FRONTEND_URL}/app"
 ACCOUNT_LOGOUT_REDIRECT_URL = f"{GASTIO_FRONTEND_URL}/"
 ACCOUNT_EMAIL_VERIFICATION = "none"
+# The custom User model intentionally removes AbstractUser.username.  Tell
+# Allauth this explicitly so the social signup flow does not try to validate
+# or generate a username after Google's callback.
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_SIGNUP_FIELDS = ["email*"]
 ACCOUNT_LOGIN_METHODS = {"email"}
 SOCIALACCOUNT_ONLY = True
