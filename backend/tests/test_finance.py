@@ -411,3 +411,151 @@ def test_postgresql_rejects_foreign_references_even_without_api(context):
             after={"revision": 1, "status": "posted"},
         )
     assert accounts(home.id).get(pk=source).balance == Decimal("100")
+
+
+def test_correction_and_void_retries_preserve_exact_balances_and_audit(context):
+    client, _, home, _ = context
+    source, target = account(client), account(client, "Otra", "0")
+    op = post(client, "transactions", payload(home, source)).data
+    key = uuid4()
+    data = {"amount": "25", "account_id": target, "expected_revision": 1}
+    url = f'/api/v1/transactions/{op["id"]}/'
+    for _ in range(2):
+        result = client.patch(url, data, format="json", HTTP_IDEMPOTENCY_KEY=str(key))
+        assert result.status_code == 200 and result.data["revision"] == 2
+    assert accounts(home.id).get(pk=source).balance == Decimal("100")
+    assert accounts(home.id).get(pk=target).balance == Decimal("-25")
+    void_key = uuid4()
+    for _ in range(2):
+        assert (
+            post(
+                client, f'transactions/{op["id"]}/void', {"expected_revision": 2}, void_key
+            ).status_code
+            == 200
+        )
+    assert (
+        post(client, f'transactions/{op["id"]}/void', {"expected_revision": 2}).status_code == 409
+    )
+    assert (
+        client.patch(
+            url,
+            {"amount": "30", "expected_revision": 2},
+            format="json",
+            HTTP_IDEMPOTENCY_KEY=str(uuid4()),
+        ).status_code
+        == 409
+    )
+    assert accounts(home.id).get(pk=target).balance == Decimal("0")
+    assert LedgerEntry.objects.filter(transaction_id=op["id"]).count() == 2
+    assert AuditEvent.objects.filter(object_id=op["id"]).count() == 3
+
+
+@pytest.mark.parametrize("role", ["owner", "admin", "member", "limited_entry"])
+def test_separate_user_cannot_read_or_mutate_foreign_financial_endpoints(context, role):
+    client, _, home, _ = context
+    source = account(client)
+    op = post(client, "transactions", payload(home, source)).data
+    category = Category.objects.filter(household=home).first()
+    other = Household.objects.create(name="Otro usuario")
+    user = User.objects.create_user("outsider@example.com")
+    HouseholdMembership.objects.create(user=user, household=other, role=role)
+    client.force_login(user)
+    session = client.session
+    session["active_household_id"] = str(other.pk)
+    session.save()
+    denial = 403 if role == "limited_entry" else 404
+    for path in [
+        f"accounts/{source}",
+        f"categories/{category.pk}",
+        f'transactions/{op["id"]}',
+        f'transactions/{op["id"]}/history',
+    ]:
+        assert client.get(f"/api/v1/{path}/").status_code == denial
+    assert (
+        post(client, f'transactions/{op["id"]}/void', {"expected_revision": 1}).status_code
+        == denial
+    )
+    assert (
+        client.patch(
+            f'/api/v1/transactions/{op["id"]}/',
+            {"amount": "1", "expected_revision": 1},
+            format="json",
+            HTTP_IDEMPOTENCY_KEY=str(uuid4()),
+        ).status_code
+        == denial
+    )
+    if role != "limited_entry":
+        assert client.get("/api/v1/transactions/").data["count"] == 0
+        assert client.get("/api/v1/accounts/").data["count"] == 0
+        assert client.get("/api/v1/dashboard/summary/").data["balance"] == "0.00"
+
+
+def test_multi_household_switch_scopes_summary_history_and_references(context):
+    client, user, home, _ = context
+    source = account(client)
+    op = post(client, "transactions", payload(home, source)).data
+    other = Household.objects.create(name="Segundo")
+    HouseholdMembership.objects.create(user=user, household=other, role="owner")
+    assert (
+        client.post(
+            "/api/v1/auth/active-household/", {"householdId": str(other.pk)}, format="json"
+        ).status_code
+        == 200
+    )
+    assert client.get("/api/v1/dashboard/summary/").data["balance"] == "0.00"
+    assert client.get(f'/api/v1/transactions/{op["id"]}/history/').status_code == 404
+    target = account(client, "Segundo", "0")
+    assert (
+        post(
+            client, "transfers", payload(other, target, "transfer", destination_id=source)
+        ).status_code
+        == 404
+    )
+    assert client.get("/api/v1/accounts/", HTTP_X_HOUSEHOLD_ID=str(home.pk)).status_code == 409
+
+
+def test_concurrent_correction_and_void_only_one_changes_revision(context):
+    client, user, home, _ = context
+    source = account(client)
+    op = post(client, "transactions", payload(home, source)).data
+
+    def run(action):
+        from apps.transactions.services import Conflict
+
+        close_old_connections()
+        try:
+            data = {"expected_revision": 1}
+            if action == "transaction.update":
+                data["amount"] = Decimal("25")
+            try:
+                write(User.objects.get(pk=user.pk), home.pk, uuid4(), action, data, op["id"])
+                return "ok"
+            except Conflict:
+                return "conflict"
+        finally:
+            connections.close_all()
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        assert sorted(executor.map(run, ["transaction.update", "transaction.void"])) == [
+            "conflict",
+            "ok",
+        ]
+    current = FinancialTransaction.objects.get(pk=op["id"])
+    expected = Decimal("100") if current.status == "voided" else Decimal("75")
+    assert accounts(home.pk).get(pk=source).balance == expected
+    assert AuditEvent.objects.filter(object_id=op["id"]).count() == 2
+
+
+def test_account_pagination_is_stable_even_with_equal_names(context):
+    client, _, home, _ = context
+    FinancialAccount.objects.bulk_create(
+        [FinancialAccount(household=home, name="Misma cuenta", kind="cash") for _ in range(30)]
+    )
+    expected = [
+        str(pk)
+        for pk in FinancialAccount.objects.filter(household=home)
+        .order_by("name", "id")
+        .values_list("pk", flat=True)
+    ]
+    pages = [client.get(f"/api/v1/accounts/?page={page}&page_size=10").data for page in [1, 2, 3]]
+    assert [item["id"] for page in pages for item in page["results"]] == expected

@@ -147,3 +147,14 @@ def test_auth_configuration_reports_missing_google_credentials_safely():
     response = APIClient().get("/api/v1/auth/config/")
     assert response.status_code == 200
     assert response.json() == {"googleLoginEnabled": False}
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("path", ["households", "auth/active-household"])
+@pytest.mark.parametrize("body", [["invalid"], "invalid", {}])
+def test_household_inputs_reject_invalid_json_with_400(path, body):
+    client = APIClient()
+    client.force_login(User.objects.create_user("invalid-input@example.com"))
+    response = client.post(f"/api/v1/{path}/", body, format="json")
+    assert response.status_code == 400
+    assert not Household.objects.exists()

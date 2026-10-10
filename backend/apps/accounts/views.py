@@ -115,7 +115,9 @@ class ActiveHouseholdView(APIView):
 
     @extend_schema(request=HouseholdSelectionInput, responses=SelectionOutput)
     def post(self, request):
-        household_id = request.data.get("householdId")
+        serializer = HouseholdSelectionInput(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        household_id = serializer.validated_data["householdId"]
         membership = resolve_active_membership(request.user, household_id)
         request.session["active_household_id"] = str(membership.household_id)
         return Response({"activeHousehold": serialize_membership(membership)})
@@ -128,22 +130,9 @@ class HouseholdCreateView(APIView):
 
     @extend_schema(request=HouseholdInput, responses={201: SelectionOutput})
     def post(self, request):
-        name = request.data.get("name", "")
-        if not isinstance(name, str) or not (name := name.strip()):
-            return Response(
-                {"error": {"code": "VALIDATION_ERROR", "message": "Nombre de hogar requerido."}},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if len(name) > 120:
-            return Response(
-                {
-                    "error": {
-                        "code": "VALIDATION_ERROR",
-                        "message": "Nombre de hogar demasiado largo.",
-                    }
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = HouseholdInput(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        name = serializer.validated_data["name"]
         with transaction.atomic():
             household = Household.objects.create(name=name)
             membership = HouseholdMembership.objects.create(

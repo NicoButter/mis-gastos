@@ -38,18 +38,19 @@ export class AccountsPageComponent {
   editingId = ''; private retry = { fingerprint: '', key: '' };
   draft = { name: '', kind: 'cash', description: '', opening_balance: '0', opening_date: localDate() };
   constructor() { effect(() => { const household = this.auth.activeHousehold()?.id; this.accounts.set([]); this.showForm.set(false); this.error.set(''); this.success.set(''); if (household) void this.load(household); }); }
-  async load(household = this.auth.activeHousehold()?.id): Promise<void> { this.loading.set(true); try { const data = await this.finance.all<FinancialAccount>('accounts'); if (household === this.auth.activeHousehold()?.id) this.accounts.set(data); } catch (error) { if (household === this.auth.activeHousehold()?.id) this.error.set(financeError(error)); } finally { this.loading.set(false); } }
-  edit(account?: FinancialAccount): void { this.editingId = account?.id ?? ''; this.draft = { name: account?.name ?? '', kind: account?.kind ?? 'cash', description: account?.description ?? '', opening_balance: '0', opening_date: localDate() }; this.showForm.set(true); this.error.set(''); this.retry = { fingerprint: '', key: '' }; }
+  async load(household = this.auth.activeHousehold()?.id): Promise<void> { this.loading.set(true); try { const data = await this.finance.all<FinancialAccount>('accounts'); if (household === this.auth.activeHousehold()?.id) this.accounts.set(data); } catch (error) { if (household === this.auth.activeHousehold()?.id) this.error.set(financeError(error)); } finally { if (household === this.auth.activeHousehold()?.id) this.loading.set(false); } }
+  edit(account?: FinancialAccount): void { this.editingId = account?.id ?? ''; this.draft = { name: account?.name ?? '', kind: account?.kind ?? 'cash', description: account?.description ?? '', opening_balance: '0', opening_date: localDate() }; this.showForm.set(true); this.error.set(''); this.success.set(''); this.retry = { fingerprint: '', key: '' }; }
   kindLabel(kind: string): string { return ({ cash: 'Efectivo', bank: 'Banco', wallet: 'Billetera virtual', other: 'Otra cuenta' } as Record<string, string>)[kind] ?? kind; }
   canManage(): boolean { return ['owner', 'admin'].includes(this.auth.activeHousehold()?.role ?? ''); }
   async save(): Promise<void> {
     if (this.busy()) return;
+    const household = this.auth.activeHousehold()?.id;
     const payload = this.editingId ? { name: this.draft.name, kind: this.draft.kind, description: this.draft.description } : { ...this.draft, opening_balance: this.draft.opening_balance.replace(',', '.') };
     const path = this.editingId ? `accounts/${this.editingId}/` : 'accounts/';
     const fingerprint = JSON.stringify({ path, payload, household: this.auth.activeHousehold()?.id });
     if (this.retry.fingerprint !== fingerprint) this.retry = { fingerprint, key: crypto.randomUUID() };
     this.busy.set(true); this.error.set('');
-    try { await this.finance.write(path, payload, this.retry.key, !!this.editingId); this.showForm.set(false); this.success.set('Cuenta guardada.'); await this.load(); } catch (error) { this.error.set(financeError(error)); } finally { this.busy.set(false); }
+    try { await this.finance.write(path, payload, this.retry.key, !!this.editingId); if (household !== this.auth.activeHousehold()?.id) return; this.showForm.set(false); this.success.set('Cuenta guardada.'); await this.load(); } catch (error) { if (household === this.auth.activeHousehold()?.id) this.error.set(financeError(error)); } finally { this.busy.set(false); }
   }
   async archive(account: FinancialAccount): Promise<void> { if (this.busy() || !confirm(`${account.is_active ? 'Archivar' : 'Reactivar'} ${account.name}? El historial se conserva.`)) return; this.busy.set(true); try { await this.finance.write(`accounts/${account.id}/`, { is_active: !account.is_active }, crypto.randomUUID(), true); await this.load(); } catch (error) { this.error.set(financeError(error)); } finally { this.busy.set(false); } }
 }

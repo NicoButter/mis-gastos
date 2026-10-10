@@ -31,3 +31,23 @@ def test_database_url_rejects_non_postgresql_engines(monkeypatch):
         assert "PostgreSQL" in str(exc)
     else:
         raise AssertionError("SQLite must not be accepted")
+
+
+def test_financial_test_configuration_rejects_real_database_names():
+    import os
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    backend = Path(__file__).resolve().parents[1]
+    for name in ["gastio_db", "postgres", ""]:
+        result = subprocess.run(
+            [sys.executable, "-c", "import config.settings.test"],
+            cwd=backend,
+            env={**os.environ, "DATABASE_TEST_NAME": name},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert result.returncode != 0
+        assert "base aislada" in result.stderr

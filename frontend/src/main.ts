@@ -1,7 +1,7 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { inject, provideAppInitializer } from '@angular/core';
-import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app.routes';
@@ -10,7 +10,7 @@ import { AuthService } from './app/core/auth.service';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(appRoutes, withEnabledBlockingInitialNavigation(), withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })),
+    provideRouter(appRoutes, withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })),
     provideHttpClient(withInterceptors([csrfInterceptor, apiErrorInterceptor])),
     provideAppInitializer(() => inject(AuthService).initialize()),
   ],

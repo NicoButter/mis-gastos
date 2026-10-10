@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import { AuthService } from '../../core/auth.service';
 import { FinanceService, FinancialAccount, Operation, Summary } from '../../core/finance.service';
 import { OperationFormComponent } from './operation-form.component';
+import { TransactionsPageComponent } from './transactions-page.component';
 import { AccountsPageComponent } from './accounts-page.component';
 import { DashboardPageComponent } from '../home/dashboard-page.component';
 
@@ -14,10 +15,10 @@ const emptySummary: Summary = { currency: 'ARS', month: '2026-10', balance: '0.0
 
 describe('financial screens', () => {
   let auth: { activeHousehold: ReturnType<typeof signal<{id: string; name: string} | null>> };
-  let finance: { all: ReturnType<typeof vi.fn>; write: ReturnType<typeof vi.fn>; read: ReturnType<typeof vi.fn>; changed: ReturnType<typeof signal<number>> };
+  let finance: { list: ReturnType<typeof vi.fn>; all: ReturnType<typeof vi.fn>; write: ReturnType<typeof vi.fn>; read: ReturnType<typeof vi.fn>; changed: ReturnType<typeof signal<number>> };
   beforeEach(() => {
     auth = { activeHousehold: signal({ id: 'home-a', name: 'Hogar A' }) };
-    finance = { all: vi.fn(async (resource: string) => resource === 'accounts' ? [account, { ...account, id: 'account-b', name: 'Banco' }] : [{ id: 'expense-a', name: 'Alimentos', type: 'expense', is_active: true }, { id: 'income-a', name: 'Sueldo', type: 'income', is_active: true }]), write: vi.fn(async () => operation), read: vi.fn(async () => emptySummary), changed: signal(0) };
+    finance = { list: vi.fn(async () => ({count: 0, next: null, previous: null, results: []})), all: vi.fn(async (resource: string) => resource === 'accounts' ? [account, { ...account, id: 'account-b', name: 'Banco' }] : [{ id: 'expense-a', name: 'Alimentos', type: 'expense', is_active: true }, { id: 'income-a', name: 'Sueldo', type: 'income', is_active: true }]), write: vi.fn(async () => operation), read: vi.fn(async () => emptySummary), changed: signal(0) };
     TestBed.configureTestingModule({ providers: [provideRouter([]), { provide: AuthService, useValue: auth }, { provide: FinanceService, useValue: finance }] });
   });
 
@@ -69,4 +70,42 @@ describe('financial screens', () => {
     finance.all.mockResolvedValue([]); auth.activeHousehold.set({ id: 'home-b', name: 'Hogar B' }); fixture.detectChanges(); await fixture.whenStable();
     expect(fixture.componentInstance.accounts()).toEqual([]); expect(fixture.componentInstance.draft.account_id).toBe('');
   });
+  it('locks inputs while saving and ignores an old household completion', async () => {
+    const fixture = TestBed.createComponent(OperationFormComponent); fixture.detectChanges(); await fixture.whenStable();
+    const component = fixture.componentInstance; component.draft.amount = '10'; component.draft.account_id = account.id; component.draft.category_id = 'expense-a';
+    let finish!: (value: Operation) => void;
+    finance.write.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const request = component.save(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('fieldset').disabled).toBe(true);
+    auth.activeHousehold.set({ id: 'home-b', name: 'Hogar B' }); fixture.detectChanges(); await fixture.whenStable();
+    component.draft.amount = '42'; finish(operation); await request;
+    expect(component.draft.amount).toBe('42'); expect(component.success()).toBe('');
+  });
+
+  it('rejects stale account and category selections', async () => {
+    const fixture = TestBed.createComponent(OperationFormComponent); fixture.detectChanges(); await fixture.whenStable();
+    const component = fixture.componentInstance; component.draft.amount = '10'; component.draft.account_id = 'archived'; component.draft.category_id = 'expense-a';
+    await component.save(); component.draft.account_id = account.id; component.draft.category_id = 'inactive'; await component.save();
+    expect(finance.write).not.toHaveBeenCalled();
+  });
+
+  it('keeps a new household account form intact after an old write completes', async () => {
+    const fixture = TestBed.createComponent(AccountsPageComponent); fixture.detectChanges(); await fixture.whenStable();
+    const component = fixture.componentInstance; component.edit(); component.draft.name = 'Old';
+    let finish!: (value: Operation) => void; finance.write.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const request = component.save(); auth.activeHousehold.set({ id: 'home-b', name: 'Hogar B' }); fixture.detectChanges(); await fixture.whenStable();
+    component.edit(); component.draft.name = 'New'; finish(operation); await request;
+    expect(component.showForm()).toBe(true); expect(component.draft.name).toBe('New'); expect(component.success()).toBe('');
+  });
+
+  it('discards a pending audit history after switching households', async () => {
+    const fixture = TestBed.createComponent(TransactionsPageComponent); fixture.detectChanges(); await fixture.whenStable();
+    let finish!: (value: unknown) => void;
+    finance.read.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const request = fixture.componentInstance.history(operation);
+    auth.activeHousehold.set({ id: 'home-b', name: 'Hogar B' }); fixture.detectChanges(); await fixture.whenStable();
+    finish({ count: 1, next: null, previous: null, results: [{ action: 'old-home', created_at: '2026-10-01', actor_name: 'Old', before: {}, after: {} }] });
+    await request; expect(fixture.componentInstance.events()).toBeNull();
+  });
+
 });

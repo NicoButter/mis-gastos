@@ -1,6 +1,42 @@
-# Estado de implementación — Fase 0
+# Estado de implementación — Gastio
 
-## Estado vigente · Fase 1 financiera · 2026-10-09
+
+## Estado vigente · Fase 1.1 · 2026-10-10
+
+Núcleo auditado y estabilizado. Correcciones: restauración de sesión antes de guards,
+JSON inválido de hogares, paginación explícita de cuentas/categorías, respuestas
+obsoletas tras cambio de hogar, bloqueo del formulario durante envío y navegación
+móvil. No se cambió el modelo contable ni se agregaron migraciones financieras.
+
+| Validación | Resultado final |
+|---|---|
+| pytest PostgreSQL temporal 18.6 | **58 aprobadas**, 1 benchmark omitido intencionalmente por opt-in |
+| Benchmark opt-in, 100 y 10.000 movimientos | Aprobado; 20 muestras por endpoint, consultas constantes (5/5/12/5) |
+| Angular TestBed/Vitest | **23 aprobadas**, 4 archivos |
+| Playwright Chromium real | **6 aprobadas**: recorrido completo + visitante en escritorio, 360 y 390 px |
+| Django check / makemigrations --check | sin problemas / sin cambios pendientes |
+| OpenAPI --validate --fail-on-warn | válido, sin errores ni warnings de generación |
+| Ruff / Black | aprobados |
+| lint TypeScript, incluido E2E / build Angular | aprobados; bundle inicial 343,67 kB |
+| CI YAML | válido; job E2E añadido, pendiente ejecución remota |
+
+El E2E usa sesiones/cookies reales generadas fuera de endpoints y DBs UUID efímeras.
+Incluye respuesta perdida después del commit, reintento con la misma clave, doble
+click, error HTTP y layout sin desbordamiento. Ningún bypass está disponible en
+producción. El benchmark mide Django/DB/serialización local, no latencia de red.
+En 10.000 filas: p95 10,59 ms movimientos, 15,51 ms saldos, 27,07 ms dashboard y
+20,58 ms fecha/categoría. No se agregaron índices sin necesidad medida.
+
+No se leyó `.env`, no se accedió a gastio_db ni se modificaron datos reales. No hubo
+commit ni push. El clúster temporal quedó detenido, sin bases de test remanentes
+ni cookies E2E. Se mantienen dos warnings de deprecación interna de drf-spectacular.
+Pendientes: móvil físico/teclado, WebKit/Firefox, OAuth externo, ACL por cuenta,
+contención bajo carga y ejecución CI/PostgreSQL 17. La Fase 2 puede iniciar sobre
+cuentas compartidas con las reglas contables nuevas definidas antes de implementarlas.
+
+[Informe técnico y reproducción completa](12_estabilizacion_fase_1_1.md).
+
+## Evidencia histórica · Fase 1 financiera · 2026-10-09
 
 Núcleo financiero implementado de punta a punta: cuentas compartidas ARS,
 categorías por hogar, ingreso/gasto/transferencia, ledger derivado por revisiones,

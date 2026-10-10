@@ -126,14 +126,18 @@ class CategoryViewSet(TenantMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Category.objects.none()
-        return Category.objects.filter(household_id=self.membership.household_id).annotate(
-            usage_count=Count(
-                "financialtransaction",
-                filter=Q(
-                    financialtransaction__creator=self.request.user,
-                    financialtransaction__status="posted",
-                ),
+        return (
+            Category.objects.filter(household_id=self.membership.household_id)
+            .annotate(
+                usage_count=Count(
+                    "financialtransaction",
+                    filter=Q(
+                        financialtransaction__creator=self.request.user,
+                        financialtransaction__status="posted",
+                    ),
+                )
             )
+            .order_by("type", "name", "id")
         )
 
     def create(self, request):

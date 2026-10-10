@@ -175,7 +175,12 @@ En este entorno se requiere ejecutar comandos con acceso PostgreSQL fuera del sa
 
 ## Límites y siguiente incremento
 
-No se afirma validación visual/E2E en navegador real: no hay navegador conectado.
+La limitación de navegador y medición que sigue corresponde a la entrega del
+2026-10-09. Fue resuelta parcialmente en la
+[Fase 1.1](12_estabilizacion_fase_1_1.md), con Chromium real, revisión visual móvil
+y benchmark aislado; ver allí los resultados vigentes.
+
+En esta entrega original no se afirmaba validación visual/E2E en navegador real.
 Las pruebas Angular renderizan los componentes con TestBed y verifican solicitudes,
 confirmaciones, errores, doble envío, reintentos, dashboard y cambio de hogar.
 No se midieron p95 con 10k operaciones ni conformidad WCAG completa. Validar en móvil

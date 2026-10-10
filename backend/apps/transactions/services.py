@@ -32,18 +32,22 @@ def authorize(membership, manage=False):
 
 
 def accounts(household_id):
-    return FinancialAccount.objects.filter(household_id=household_id).annotate(
-        balance=Coalesce(
-            Sum(
-                "entries__amount",
-                filter=Q(
-                    entries__transaction__status="posted",
-                    entries__revision=F("entries__transaction__revision"),
+    return (
+        FinancialAccount.objects.filter(household_id=household_id)
+        .annotate(
+            balance=Coalesce(
+                Sum(
+                    "entries__amount",
+                    filter=Q(
+                        entries__transaction__status="posted",
+                        entries__revision=F("entries__transaction__revision"),
+                    ),
                 ),
-            ),
-            Value(Decimal("0")),
-            output_field=DecimalField(max_digits=24, decimal_places=2),
+                Value(Decimal("0")),
+                output_field=DecimalField(max_digits=24, decimal_places=2),
+            )
         )
+        .order_by("name", "id")
     )
 
 

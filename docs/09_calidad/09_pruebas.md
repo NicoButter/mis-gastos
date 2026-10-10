@@ -41,7 +41,12 @@ dashboard, rollback y escrituras concurrentes idénticas sobre PostgreSQL real.
 También prueba rechazo de ledger parcial/mutable y FKs cruzadas desde ORM.
 Las pruebas Angular de finance verifican formularios, errores, confirmación móvil,
 reintentos/doble envío, refresco y aislamiento de respuestas al cambiar hogar.
-T-01/02/05/06/07/08/14/15 cubiertos; T-16/17 requieren navegador y medición real.
+T-01/02/05/06/07/08/14/15 cubiertos. En Fase 1.1 se agregaron Playwright con
+Chromium real (escritorio/360/390 px) y medición reproducible de 100/10.000
+movimientos con PostgreSQL aislado: T-16 parcialmente validado (falta teclado,
+móvil físico y accesibilidad integral), T-17 medido sin N+1 en el dataset sintético.
+Tarjetas, cuotas, invitaciones y presupuestos de este catálogo siguen fuera de alcance.
+Ver [informe Fase 1.1](../10_planificacion/12_estabilizacion_fase_1_1.md).
 Resultados y limitaciones en [estado](../10_planificacion/estado_implementacion.md).
 
 Requisito trazado; migración reversible o estrategia documentada; tests de casos felices y negativos; permiso tenant probado; observabilidad sin PII; API documentada; interfaz responsive/accesible; revisión de código; despliegue repetible. Ninguna fase se marca completa con solo endpoints o mockups.

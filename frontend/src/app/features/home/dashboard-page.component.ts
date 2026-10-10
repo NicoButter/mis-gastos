@@ -24,7 +24,7 @@ import { FinanceService, Summary, financeError, localDate, money } from '../../c
 export class DashboardPageComponent {
   readonly auth = inject(AuthService); private readonly finance = inject(FinanceService); readonly summary = signal<Summary | null>(null); readonly loading = signal(false); readonly error = signal(''); readonly money = money;
   month = localDate().slice(0, 7); private version = 0;
-  constructor() { effect(() => { const household = this.auth.activeHousehold()?.id; this.finance.changed(); this.summary.set(null); this.error.set(''); if (household) void this.load(); }); }
+  constructor() { effect(() => { const household = this.auth.activeHousehold()?.id; this.finance.changed(); ++this.version; this.summary.set(null); this.error.set(''); if (household) void this.load(); }); }
   kpis(data: Summary): { label: string; value: string }[] { return [{ label: 'Saldo consolidado actual', value: data.balance }, { label: 'Ingresos del mes', value: data.income }, { label: 'Gastos del mes', value: data.expense }, { label: 'Resultado neto del mes', value: data.net }]; }
   async load(): Promise<void> { const version = ++this.version; this.loading.set(true); this.error.set(''); try { const data = await this.finance.read<Summary>('dashboard/summary/', { month: this.month }); if (version === this.version) this.summary.set(data); } catch (error) { if (version === this.version) this.error.set(financeError(error)); } finally { if (version === this.version) this.loading.set(false); } }
 }

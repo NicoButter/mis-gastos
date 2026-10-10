@@ -20,3 +20,14 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .notice-success { @apply mt-4 rounded-xl border border-teal-200 bg-teal-50 p-4 text-teal-800 dark:bg-teal-950 dark:text-teal-200; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; opacity: .6; }
+
+nav[aria-label="Navegación móvil"] { padding-bottom: max(.5rem, env(safe-area-inset-bottom)); }
+.finance-card button:not(.btn-primary), .finance-card a { min-height: 44px; display: inline-flex; align-items: center; }
+.finance-card p, .finance-card h2 { overflow-wrap: anywhere; }
+
+.form-input.amount-input { font-size: 1.875rem; font-weight: 700; }
+
+@media (max-width: 1023px) {
+  html { scroll-padding-bottom: 6rem; }
+  .finance-card button, .form-input { scroll-margin-bottom: 6rem; }
+}

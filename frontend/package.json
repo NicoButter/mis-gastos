@@ -6,7 +6,8 @@
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test --watch=false",
-    "lint": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.spec.json"
+    "lint": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.spec.json && tsc --noEmit -p tsconfig.e2e.json",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@angular/common": "~21.2.0",
@@ -23,6 +24,7 @@
     "@angular/build": "~21.2.0",
     "@angular/cli": "~21.2.0",
     "@angular/compiler-cli": "~21.2.0",
+    "@playwright/test": "^1.64.0",
     "@tailwindcss/postcss": "^4.1.0",
     "jsdom": "^27.0.1",
     "tailwindcss": "^4.1.0",
