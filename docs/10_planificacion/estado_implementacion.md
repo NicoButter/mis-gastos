@@ -1,5 +1,16 @@
 # Estado de implementación — Gastio
 
+## Diseño · Fase 2.0
+
+Se documentó una propuesta formal para tarjetas de crédito y cuotas en
+[Diseño Fase 2.0](13_diseno_fase_2_tarjetas_cuotas.md). El trabajo es diseño,
+no implementación: no agrega modelos, endpoints, pantallas ni migraciones y no
+modifica `gastio_db`. ADR-002 sigue pendiente de ratificación. La recomendación
+es iniciar implementación sólo después de acordar la transición del ledger
+actual (deltas de caja) a un diario balanceado, validar el backfill histórico y
+cerrar las decisiones de ciclos, conciliación y permisos señaladas en el diseño.
+No se ejecutaron suites en esta iteración documental.
+
 
 ## Estado vigente · Fase 1.1 · 2026-10-10
 

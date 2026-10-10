@@ -1,5 +1,10 @@
 # 06 · Contrato REST API v1 (propuesta)
 
+Las rutas de tarjetas, cuotas, pagos y presupuestos de esta tabla son un boceto
+histórico y no están implementadas. La propuesta vigente para tarjetas está en
+[Diseño Fase 2.0](../10_planificacion/13_diseno_fase_2_tarjetas_cuotas.md), aún
+sujeta a ratificación; no constituye contrato operativo ni esquema OpenAPI.
+
 Base `/api/v1/`; JSON; autenticación obligatoria salvo endpoints públicos; OpenAPI generado desde backend como fuente definitiva. IDs UUID; paginación; respuestas con códigos y errores consistentes.
 
 ## Rutas

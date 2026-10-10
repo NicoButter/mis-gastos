@@ -69,7 +69,7 @@ por revisión; PostgreSQL verifica consistencia al commit. Cuentas compartidas;
 carga limitada denegada hasta ACL explícitas. Detalle:
 [ADR y ledger](../10_planificacion/11_nucleo_financiero.md#auditoría-y-decisiones).
 
-Separar `Transaction` como evento de negocio y `LedgerEntry` como afectación de saldo/deuda (o diseño equivalente de libro mayor). Una compra con tarjeta crea gasto + obligación, pago de tarjeta reduce cuenta líquida + deuda y transferencia mueve entre cuentas, sin crear consumo adicional. Definir modelo contable exacto antes de migraciones definitivas.
+El ledger implementado en Fase 1 es un libro de deltas de cuentas líquidas, no un diario de doble partida ni un registro de deuda. Por ello, una tarjeta no debe modelarse como `FinancialAccount`. La propuesta formal para evolucionar el núcleo a asientos balanceados, separar caja de pasivos, contabilizar consumo/pagos sin duplicar gastos y migrar el historial está en [Diseño Fase 2.0](../10_planificacion/13_diseno_fase_2_tarjetas_cuotas.md). Es una decisión propuesta para ratificación: no describe funcionalidad implementada ni autoriza migraciones.
 
 ## Despliegue
 

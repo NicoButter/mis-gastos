@@ -2,6 +2,11 @@
 
 ## Secuencia de entregas para Codex
 
+La secuencia histórica siguiente se conserva como registro. El estado vigente de
+Fase 1.1 consta en `estado_implementacion.md`; Fase 2.0 es diseño y auditoría,
+no implementación. Su propuesta de decisión y verticales está en
+[Diseño formal de tarjetas y cuotas](13_diseno_fase_2_tarjetas_cuotas.md).
+
 | Fase | Entregable | Criterios de salida |
 |---|---|---|
 | 0 ✓ Completada | Scaffolding monorepo, configs, env, CI, salud y README | Backend/frontend arrancan, PostgreSQL conecta, tests base verdes (9/9 backend con PostgreSQL 18.6) |

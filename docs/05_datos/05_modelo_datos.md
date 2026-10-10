@@ -1,6 +1,6 @@
 # 05 · Modelo de datos conceptual y lógico inicial
 
-> Modelo propuesto; revisar ADR-002 antes de fijar migraciones de ledger/tarjetas. Todas las FK dentro de un hogar requieren comprobación de pertenencia cruzada.
+> Modelo conceptual inicial; no es el esquema desplegado. La especificación actual propuesta para ledger, tarjetas, compras, cuotas y pagos está en [Diseño Fase 2.0](../10_planificacion/13_diseno_fase_2_tarjetas_cuotas.md). ADR-002 sigue pendiente de ratificación antes de fijar migraciones. Todas las FK dentro de un hogar requieren comprobación de pertenencia cruzada.
 
 ```mermaid
 erDiagram
@@ -63,6 +63,13 @@ y WriteReceipt. Entradas/auditoría/recibos inmutables; sólo revisión vigente 
 afecta el saldo. Transferencia única con dos entradas. FKs PROTECT, constraints y
 triggers PostgreSQL aseguran forma, signos, tenant y evidencia.
 [Modelo y migraciones](../10_planificacion/11_nucleo_financiero.md#modelo-y-garantías).
+
+La tabla `LedgerEntry` y las entidades de tarjeta dibujadas arriba son una
+abstracción conceptual heredada, no el esquema real ni una propuesta suficiente
+para las nuevas operaciones: el ledger actual sólo afecta cuentas líquidas y las
+tarjetas no están implementadas. La propuesta Fase 2.0 define la transición a un
+diario balanceado; no agregar `card_id` al ledger actual como sustituto de esa
+decisión.
 
 1. Identidad y hogares.
 2. Cuentas y categorías.
