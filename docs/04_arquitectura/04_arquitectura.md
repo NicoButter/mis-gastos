@@ -82,7 +82,7 @@ Request ID + user ID + household ID (sin datos sensibles), métricas de latencia
 ## ADR pendientes
 
 - ADR-001: nombres/roles finales y privacidad por cuenta.
-- ADR-002: ledger definitivo y algoritmo exacto de ciclo de tarjeta/cierre/vencimiento.
+- ADR-002: diario balanceado y algoritmo exacto de ciclo de tarjeta/cierre/vencimiento. Alternativa C es recomendación condicionada; backfill y paridad no están demostrados. Ver [auditoría de viabilidad](../10_planificacion/14_auditoria_adr_002_migracion_contable.md).
 - ADR-003: autenticación SPA (cookies/sesión vs tokens) y estrategia CSRF.
 - ADR-004: modo offline en evolución posterior.
 - ADR-005: planes/licenciamiento sin contaminación de dominio financiero.

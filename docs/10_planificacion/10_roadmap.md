@@ -6,6 +6,8 @@ La secuencia histórica siguiente se conserva como registro. El estado vigente d
 Fase 1.1 consta en `estado_implementacion.md`; Fase 2.0 es diseño y auditoría,
 no implementación. Su propuesta de decisión y verticales está en
 [Diseño formal de tarjetas y cuotas](13_diseno_fase_2_tarjetas_cuotas.md).
+ADR-002 no se ratifica hasta completar el gate de
+[viabilidad de migración](14_auditoria_adr_002_migracion_contable.md).
 
 | Fase | Entregable | Criterios de salida |
 |---|---|---|

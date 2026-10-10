@@ -9,7 +9,12 @@ modifica `gastio_db`. ADR-002 sigue pendiente de ratificación. La recomendació
 es iniciar implementación sólo después de acordar la transición del ledger
 actual (deltas de caja) a un diario balanceado, validar el backfill histórico y
 cerrar las decisiones de ciclos, conciliación y permisos señaladas en el diseño.
-No se ejecutaron suites en esta iteración documental.
+No se ejecutaron suites en esta iteración documental. La auditoría posterior
+[Fase 2.0a](14_auditoria_adr_002_migracion_contable.md) recomienda C (migración
+integral eventual) como destino, pero deja ADR-002 pendiente: no existe aún
+ensayo aislado ni conciliación por hogar/cuenta/período/categoría con diferencia
+cero. La implementación financiera de Fase 2 está bloqueada hasta superar ese
+gate; el ledger de Fase 1 se conserva.
 
 
 ## Estado vigente · Fase 1.1 · 2026-10-10

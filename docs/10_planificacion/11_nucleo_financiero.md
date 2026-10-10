@@ -27,6 +27,11 @@ Esta estrategia ofrece equivalencia a una reversión contable sin entradas destr
 Las aperturas son inmutables y separadas de ingresos; saldo inicial cero no genera entrada.
 La interfaz acepta aperturas no negativas; saldos posteriores pueden ser negativos.
 
+Esta es la semántica del ledger líquido de Fase 1, no un diario de doble partida.
+ADR-002 evalúa su evolución a un diario general; la migración integral sólo se
+recomienda tras demostrar backfill y paridad en una base aislada:
+[auditoría Fase 2.0a](14_auditoria_adr_002_migracion_contable.md).
+
 ADR-003: se conserva OAuth Allauth y sesión/cookie/CSRF. El tenant efectivo se obtiene
 de `active_household_id` en sesión y se vuelve a autorizar en cada endpoint. Las rutas
 financieras usan `/api/v1/accounts/` etc. en lugar de repetir el hogar en la ruta;

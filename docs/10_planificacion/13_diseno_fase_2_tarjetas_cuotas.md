@@ -4,13 +4,16 @@
 **Fecha:** 2026-10-10  
 **Ámbito:** reglas contables, modelo de dominio, seguridad, contratos y plan. No se crean modelos, migraciones, endpoints ni pantallas en esta iteración.
 
+La auditoría de viabilidad posterior precisa este diseño y mantiene ADR-002
+pendiente hasta ejecutar conciliación de backfill aislada: [Fase 2.0a](14_auditoria_adr_002_migracion_contable.md).
+
 ## 1. Decisión y recomendación
 
 La tarjeta es un **pasivo**, no una cuenta de dinero. Una compra reconoce consumo una sola vez y crea una obligación; las cuotas reparten fechas de exigibilidad, no vuelven a crear el consumo. Una liquidación reduce efectivo y pasivo; nunca es un gasto. Los pagos de resúmenes deben conciliar con pasivos, no mezclarse con los KPIs de consumo.
 
 El libro de Fase 1 **no es un mayor de doble partida**. `LedgerEntry` sólo referencia `FinancialAccount` y representa un delta de saldo. `FinancialTransaction` exige una cuenta de dinero y limita su forma a apertura, ingreso, gasto o transferencia. La consulta de saldo suma entradas de la revisión actual de operaciones vigentes. Categoría y transacción permiten informes de consumo, pero no son contrapartidas del ledger. La inmutabilidad de `LedgerEntry` evita reescrituras; no convierte por sí sola esos deltas en un libro que admita pasivos.
 
-Por tanto, el primer incremento de implementación debe establecer un único diario balanceado y su corte de lectura antes de registrar compras con tarjeta. No se agregará un libro de tarjeta paralelo. Los eventos actuales de Fase 1 y los nuevos eventos de tarjeta deben proyectarse en el mismo diario. La tabla histórica `LedgerEntry` se conserva durante la transición y se retira o queda como proyección de compatibilidad sólo cuando una conciliación demuestre que no vuelve a ser fuente de verdad.
+Como destino arquitectónico se propone un diario balanceado común antes de registrar compras con tarjeta. No se agregará un libro de tarjeta paralelo. La tabla histórica `LedgerEntry` no se retirará durante la transición. La recomendación de migración integral y su condición de viabilidad están sujetas al gate de [Fase 2.0a](14_auditoria_adr_002_migracion_contable.md); no asumir que el backfill o el corte ya fueron demostrados.
 
 Decisiones propuestas para revisión:
 
