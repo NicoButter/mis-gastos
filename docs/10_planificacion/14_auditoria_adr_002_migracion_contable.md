@@ -236,3 +236,11 @@ No iniciar 2.1 antes del Gate ADR-002. Las implementaciones financieras mantiene
 - `docs/10_planificacion/11_nucleo_financiero.md`, `13_diseno_fase_2_tarjetas_cuotas.md`.
 
 Esta auditoría amplía la recomendación de Fase 2.0; prevalece como gate de viabilidad y deja ADR-002 **pendiente**, no aprobado.
+
+### Seguimiento Fase 2.0b
+
+Se implementó el POC aislado y pasaron 11 escenarios sintéticos sobre PostgreSQL
+18.6. El resultado valida constraints, reejecución, rollback y agregados para los
+fixtures. No se pudo evaluar el historial de desarrollo: el endpoint PostgreSQL
+local no respondió y no se usó `gastio_db`. Por lo tanto, continúa bloqueada la
+ratificación hasta el PASS de copia real. Detalle: [prueba de migración 2.0b](15_prueba_migracion_contable.md).

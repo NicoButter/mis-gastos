@@ -8,6 +8,9 @@ no implementación. Su propuesta de decisión y verticales está en
 [Diseño formal de tarjetas y cuotas](13_diseno_fase_2_tarjetas_cuotas.md).
 ADR-002 no se ratifica hasta completar el gate de
 [viabilidad de migración](14_auditoria_adr_002_migracion_contable.md).
+La Fase 2.0b ya cubrió fixtures sintéticos; falta conciliación de una copia real
+representativa antes de avanzar a 2.1. Ver
+[informe de prueba aislada](15_prueba_migracion_contable.md).
 
 | Fase | Entregable | Criterios de salida |
 |---|---|---|
