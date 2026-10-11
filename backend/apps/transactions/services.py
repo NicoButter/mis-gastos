@@ -1,5 +1,7 @@
 import hashlib
 import json
+import re
+from datetime import date
 from decimal import Decimal
 from uuid import UUID
 
@@ -7,6 +9,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import DecimalField, F, Q, Sum, Value
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 from django.utils.text import slugify
 from rest_framework.exceptions import APIException, NotFound, PermissionDenied, ValidationError
 
@@ -31,22 +34,59 @@ def authorize(membership, manage=False):
         raise PermissionDenied("Permiso financiero insuficiente.")
 
 
-def accounts(household_id):
-    return (
-        FinancialAccount.objects.filter(household_id=household_id)
-        .annotate(
-            balance=Coalesce(
-                Sum(
-                    "entries__amount",
-                    filter=Q(
-                        entries__transaction__status="posted",
-                        entries__revision=F("entries__transaction__revision"),
-                    ),
-                ),
+def monthly_period(raw=None):
+    raw = raw if raw is not None else timezone.localdate().strftime("%Y-%m")
+    try:
+        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}", raw):
+            raise ValueError
+        start = date.fromisoformat(raw + "-01")
+        end = date(start.year + (start.month == 12), start.month % 12 + 1, 1)
+    except (ValueError, TypeError) as exc:
+        raise ValidationError({"month": "Usá YYYY-MM dentro del rango 0001-01 a 9999-11."}) from exc
+    return raw, start, end
+
+
+def accounts(household_id, period=None):
+    current = Q(
+        entries__transaction__status="posted",
+        entries__revision=F("entries__transaction__revision"),
+    )
+
+    def total(condition, sign=1):
+        return (
+            Coalesce(
+                Sum("entries__amount", filter=condition),
                 Value(Decimal("0")),
                 output_field=DecimalField(max_digits=24, decimal_places=2),
             )
+            * sign
         )
+
+    annotations = {"balance": total(current)}
+    if period:
+        raw, start, end = period
+        monthly = current & Q(
+            entries__transaction__effective_date__gte=start,
+            entries__transaction__effective_date__lt=end,
+        )
+        annotations.update(
+            month=Value(raw),
+            monthly_inflow=total(monthly & Q(entries__amount__gt=0)),
+            monthly_outflow=total(monthly & Q(entries__amount__lt=0), -1),
+            monthly_income=total(monthly & Q(entries__transaction__type="income")),
+            monthly_expense=total(monthly & Q(entries__transaction__type="expense"), -1),
+            monthly_opening=total(monthly & Q(entries__transaction__type="opening")),
+            monthly_transfer_in=total(
+                monthly & Q(entries__transaction__type="transfer", entries__amount__gt=0)
+            ),
+            monthly_transfer_out=total(
+                monthly & Q(entries__transaction__type="transfer", entries__amount__lt=0), -1
+            ),
+            monthly_card_payments=total(monthly & Q(entries__transaction__type="card_payment"), -1),
+        )
+    return (
+        FinancialAccount.objects.filter(household_id=household_id)
+        .annotate(**annotations)
         .order_by("name", "id")
     )
 

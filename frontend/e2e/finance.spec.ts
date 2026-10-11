@@ -1,3 +1,4 @@
+import { isolateHousehold } from './household';
 import { test, expect, Page } from '@playwright/test';
 
 async function navigate(page: Page, label: string) {
@@ -27,6 +28,7 @@ async function operation(page: Page, type: string, amount: string, description: 
 }
 
 test('sesión real, estados vacíos y ciclo financiero completo', async ({ page }, testInfo) => {
+  await isolateHousehold(page, 'E2E independiente');
   await page.route('**/*google*/**', route => route.abort());
   await page.route('**/api/v1/auth/me/', async route => { await new Promise(resolve => setTimeout(resolve, 200)); await route.continue(); });
   await page.goto('/app');
@@ -53,7 +55,10 @@ test('sesión real, estados vacíos y ciclo financiero completo', async ({ page 
   await expense.getByRole('button', { name: 'Historial' }).click();
   await expect(page.getByText('transaction.void', { exact: false })).toBeVisible();
   await navigate(page, 'Panel');
-  await expect(page.locator('article').filter({ hasText: 'Saldo consolidado actual' })).toContainText('150,00');
+  await expect(page.locator('article').filter({ hasText: 'Saldo disponible' })).toContainText('150,00');
+  await expect(page.getByTestId('monthly-income')).toContainText('50,00');
+  await expect(page.getByTestId('monthly-expense')).toContainText('0,00');
+  await expect(page.getByTestId('monthly-net')).toContainText('50,00');
   await navigate(page, 'Cuentas');
   await expect(page.locator('article').filter({ has: page.getByRole('heading', { name: 'Efectivo E2E', exact: true }) })).toContainText('130,00');
   await expect(page.locator('article').filter({ has: page.getByRole('heading', { name: 'Banco E2E', exact: true }) })).toContainText('20,00');

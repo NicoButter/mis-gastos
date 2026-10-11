@@ -11,7 +11,7 @@ import { DashboardPageComponent } from '../home/dashboard-page.component';
 
 const account: FinancialAccount = { id: 'account-a', name: 'Efectivo', kind: 'cash', currency: 'ARS', description: '', is_active: true, balance: '0.00' };
 const operation: Operation = { id: 'operation-a', type: 'expense', amount: '10.25', currency: 'ARS', effective_date: '2026-10-09', description: '', account_id: account.id, destination_id: null, category_id: 'expense-a', account_name: account.name, destination_name: null, category_name: 'Alimentos', creator_name: 'Persona', status: 'posted', revision: 1, can_edit: true };
-const emptySummary: Summary = { currency: 'ARS', month: '2026-10', balance: '0.00', income: '0.00', expense: '0.00', net: '0.00', count: 0, accounts: [], recent: [], distribution: [] };
+const emptySummary: Summary = { available_balances: [{ currency: 'ARS', amount: '0.00' }], currency: 'ARS', month: '2026-10', balance: '0.00', income: '0.00', expense: '0.00', net: '0.00', count: 0, accounts: [], recent: [], distribution: [] };
 
 describe('financial screens', () => {
   let auth: { activeHousehold: ReturnType<typeof signal<{id: string; name: string} | null>> };
@@ -106,6 +106,74 @@ describe('financial screens', () => {
     auth.activeHousehold.set({ id: 'home-b', name: 'Hogar B' }); fixture.detectChanges(); await fixture.whenStable();
     finish({ count: 1, next: null, previous: null, results: [{ action: 'old-home', created_at: '2026-10-01', actor_name: 'Old', before: {}, after: {} }] });
     await request; expect(fixture.componentInstance.events()).toBeNull();
+  });
+
+  it('renders prominent available balance, monthly result and overspending from real summary fields', async () => {
+    finance.read.mockResolvedValue({ ...emptySummary, balance: '999.00', available_balances: [{ currency: 'ARS', amount: '123.45' }], income: '100.00', expense: '150.25', net: '-50.25' });
+    const fixture = TestBed.createComponent(DashboardPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('[data-testid="available-balance"]')?.textContent).toContain('123,45');
+    expect(element.querySelector('[data-testid="available-balance"]')?.textContent).not.toContain('999,00');
+    expect(element.querySelector('[data-testid="monthly-income"]')?.textContent).toContain('100,00');
+    expect(element.querySelector('[data-testid="monthly-expense"]')?.textContent).toContain('150,25');
+    expect(element.querySelector('[data-testid="monthly-net"]')?.textContent).toContain('−$\u00a050,25');
+    expect(element.querySelector('[role="progressbar"]')?.getAttribute('aria-valuetext')).toContain('150,25% · sobregasto');
+    expect(element.textContent).toContain('Saldo actual');
+  });
+
+  it('changes dashboard period and ignores an older response while preserving the current balance', async () => {
+    const fixture = TestBed.createComponent(DashboardPageComponent); fixture.detectChanges(); await fixture.whenStable();
+    let finish!: (value: Summary) => void;
+    finance.read.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const pending = fixture.componentInstance.load();
+    finance.read.mockResolvedValue({ ...emptySummary, month: '2026-09', income: '42.10', available_balances: [{ currency: 'ARS', amount: '75.25' }] });
+    fixture.componentInstance.changePeriod('2026-09'); await fixture.whenStable(); fixture.detectChanges();
+    expect(finance.read).toHaveBeenLastCalledWith('dashboard/summary/', { month: '2026-09' });
+    expect(fixture.componentInstance.summary()?.income).toBe('42.10');
+    finish({ ...emptySummary, income: '999.00' }); await pending;
+    expect(fixture.componentInstance.summary()?.income).toBe('42.10');
+    finance.changed.update(value => value + 1); fixture.detectChanges(); await fixture.whenStable();
+    expect(finance.read).toHaveBeenLastCalledWith('dashboard/summary/', { month: '2026-09' });
+  });
+
+  it('clears dashboard KPIs on household change and discards a stale response', async () => {
+    const fixture = TestBed.createComponent(DashboardPageComponent); fixture.detectChanges(); await fixture.whenStable();
+    let finish!: (value: Summary) => void;
+    finance.read.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const pending = fixture.componentInstance.load();
+    auth.activeHousehold.set({ id: 'home-b', name: 'Hogar B' }); fixture.detectChanges(); await fixture.whenStable();
+    finish({ ...emptySummary, available_balances: [{ currency: 'ARS', amount: '999.99' }] }); await pending; fixture.detectChanges();
+    expect(fixture.componentInstance.summary()?.available_balances[0].amount).toBe('0.00');
+    expect(fixture.nativeElement.textContent).not.toContain('999,99');
+  });
+
+  it('shows account flows separately, selects one account and refreshes on month and writes', async () => {
+    finance.all.mockResolvedValue([{ ...account, balance: '90.25', monthly_income: '100.00', monthly_expense: '10.00', monthly_inflow: '150.00', monthly_outflow: '60.00' }, { ...account, id: 'account-b', name: 'Banco' }]);
+    const fixture = TestBed.createComponent(AccountsPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
+    const component = fixture.componentInstance; const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement; select.value = account.id; select.dispatchEvent(new Event('change')); await fixture.whenStable(); fixture.detectChanges();
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Entradas del mes'); expect(text).toContain('150,00');
+    expect(text).toContain('Ingresos del mes'); expect(text).toContain('100,00');
+    expect(text).toContain('Salidas del mes'); expect(text).toContain('60,00');
+    expect(text).toContain('Gastos del mes'); expect(text).toContain('10,00');
+    expect(fixture.nativeElement.querySelectorAll('article')).toHaveLength(1);
+    component.changePeriod('2026-09'); await fixture.whenStable();
+    expect(finance.all).toHaveBeenLastCalledWith('accounts', { month: '2026-09' });
+    finance.changed.update(value => value + 1); fixture.detectChanges(); await fixture.whenStable();
+    expect(finance.all).toHaveBeenLastCalledWith('accounts', { month: '2026-09' });
+    finance.all.mockResolvedValue([]); auth.activeHousehold.set({ id: 'home-b', name: 'Hogar B' }); fixture.detectChanges(); await fixture.whenStable();
+    expect(component.accounts()).toEqual([]); expect(component.selectedAccountId).toBe('');
+  });
+
+  it('discards account summaries from an older period', async () => {
+    const fixture = TestBed.createComponent(AccountsPageComponent); fixture.detectChanges(); await fixture.whenStable();
+    let finish!: (value: FinancialAccount[]) => void;
+    finance.all.mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const pending = fixture.componentInstance.load();
+    finance.all.mockResolvedValue([{ ...account, monthly_income: '42.00' }]);
+    fixture.componentInstance.changePeriod('2026-08'); await fixture.whenStable();
+    finish([{ ...account, monthly_income: '999.00' }]); await pending;
+    expect(fixture.componentInstance.accounts()[0].monthly_income).toBe('42.00');
   });
 
 });

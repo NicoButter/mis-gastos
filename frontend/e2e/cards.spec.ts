@@ -1,6 +1,8 @@
+import { isolateHousehold } from './household';
 import { expect, test } from '@playwright/test';
 
 test('six installments and account payment without duplicate expense', async ({ page }, testInfo) => {
+  await isolateHousehold(page, 'E2E independiente');
   await page.goto('/app/accounts');
   await page.getByRole('button', { name: 'Agregar cuenta' }).click();
   await page.getByLabel('Nombre', { exact: true }).fill('Banco tarjetas');

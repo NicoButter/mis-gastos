@@ -3,14 +3,14 @@ import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from './auth.service';
 
-export interface FinancialAccount { id: string; name: string; kind: string; currency: string; description: string; is_active: boolean; balance: string; usage_count?: number; }
+export interface FinancialAccount { id: string; name: string; kind: string; currency: string; description: string; is_active: boolean; balance: string; usage_count?: number; month?: string; monthly_inflow?: string; monthly_outflow?: string; monthly_income?: string; monthly_expense?: string; monthly_opening?: string; monthly_transfer_in?: string; monthly_transfer_out?: string; monthly_card_payments?: string; }
 export interface Category { id: string; name: string; type: string; slug: string; is_active: boolean; color: string; usage_count?: number; }
 export interface Operation { id: string; type: string; amount: string; currency: string; effective_date: string; description: string; account_id: string; destination_id: string | null; category_id: string | null; account_name: string; destination_name: string | null; category_name: string | null; creator_name: string; status: string; revision: number; can_edit: boolean; }
 export interface Page<T> { count: number; next: string | null; previous: string | null; results: T[]; }
 export interface CreditCard { id: string; bank: string; name: string; closing_day: number; due_day: number; is_active: boolean; }
 export interface CardInstallment { id: string; number: number; amount: string; closing_date: string; due_date: string; card_name: string; description: string; installments_count: number; payment_id: string | null; paid_date: string | null; account_name: string | null; }
 export interface CardPurchase { id: string; card_id: string; description: string; amount: string; purchase_date: string; installments_count: number; pending_amount: string; installments: CardInstallment[]; }
-export interface Summary { card_pending?: string; upcoming_installments?: CardInstallment[]; currency: string; month: string; balance: string; income: string; expense: string; net: string; count: number; accounts: FinancialAccount[]; recent: Operation[]; distribution: { name: string; amount: string }[]; }
+export interface Summary { available_balances: { currency: string; amount: string }[]; card_pending?: string; upcoming_installments?: CardInstallment[]; currency: string; month: string; balance: string; income: string; expense: string; net: string; count: number; accounts: FinancialAccount[]; recent: Operation[]; distribution: { name: string; amount: string }[]; }
 export interface History { action: string; actor_name: string; before: Record<string, unknown>; after: Record<string, unknown>; created_at: string; }
 
 export function localDate(): string {
@@ -18,12 +18,26 @@ export function localDate(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 }
 
-export function money(value: string): string {
+export function money(value: string, currency = 'ARS'): string {
   const negative = value.startsWith('-');
   const [whole, fraction = '00'] = value.replace(/^-/, '').split('.');
-  const formatted = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(BigInt(whole || '0'));
-  return (negative ? '−' : '') + formatted.replace(/,00$/, ',' + fraction.padEnd(2, '0').slice(0, 2));
+  const parts = new Intl.NumberFormat('es-AR', { style: 'currency', currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).formatToParts(BigInt(whole || '0'));
+  return (negative ? '−' : '') + parts.map(part => part.type === 'fraction' ? fraction.padEnd(2, '0').slice(0, 2) : part.value).join('');
 }
+
+export function cents(value: string): bigint {
+  const [whole, fraction = ''] = value.replace(/^-/, '').split('.');
+  const result = BigInt(whole || '0') * 100n + BigInt(fraction.padEnd(2, '0').slice(0, 2));
+  return value.startsWith('-') ? -result : result;
+}
+
+export function spendingRatio(income: string, expense: string): { percent: string; width: number; overspent: boolean } | null {
+  const incoming = cents(income), outgoing = cents(expense);
+  if (incoming <= 0n) return null;
+  const basisPoints = outgoing * 10000n / incoming;
+  return { percent: `${basisPoints / 100n},${String(basisPoints % 100n).padStart(2, '0')}%`, width: Number(basisPoints > 10000n ? 10000n : basisPoints) / 100, overspent: outgoing > incoming };
+}
+
 export function financeError(error: unknown): string {
   if (error instanceof HttpErrorResponse) {
     const fields = error.error?.error?.fields;
@@ -43,11 +57,11 @@ export class FinanceService {
   async list<T>(resource: string, filters: Record<string, string> = {}): Promise<Page<T>> {
     return this.read<Page<T>>(`${resource}/`, filters);
   }
-  async all<T>(resource: string): Promise<T[]> {
+  async all<T>(resource: string, filters: Record<string, string> = {}): Promise<T[]> {
     const household = this.auth.activeHousehold()?.id;
     const result: T[] = [];
     for (let page = 1; ; page++) {
-      const response = await this.list<T>(resource, { page: String(page), page_size: '100' });
+      const response = await this.list<T>(resource, { ...filters, page: String(page), page_size: '100' });
       if (household !== this.auth.activeHousehold()?.id) throw new Error('El hogar cambió.');
       result.push(...response.results);
       if (!response.next) return result;

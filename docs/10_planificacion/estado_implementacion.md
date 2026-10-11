@@ -1,3 +1,20 @@
+## Dashboard y resumen por cuenta · 2026-10-10
+
+Saldo disponible actual destacado (efectivo, bancos y billeteras activas), ingresos,
+gastos y resultado mensual diferenciados, navegación por mes/año y barra proporcional
+con sobregasto. Cuentas muestra saldo actual, entradas/salidas e ingresos/gastos del
+período, desglose de aperturas/transferencias/pagos de tarjeta y selector individual.
+Se extienden los endpoints existentes con consultas agregadas, sin modelos ni
+migraciones nuevas. Se conserva la imputación de cuotas por vencimiento y se excluyen
+los pagos de tarjeta de los gastos para no duplicarlos.
+
+Validación: 67 pruebas backend aprobadas (12 opt-in/POC omitidas), benchmark existente
+aprobado con 100/10.000 movimientos y consultas constantes; 32 pruebas Angular,
+lint/build, Django check, OpenAPI válido y sin migraciones pendientes. Los 12 recorridos
+Chromium pasaron en escritorio, 360 y 390 px; capturas revisadas. Datos de pruebas sólo
+en PostgreSQL temporal, detenido al finalizar. Sin cambios en la base real, commits
+ni pushes.
+
 ## Tarjetas simples · 2026-10-10
 
 Implementado el flujo en `/app/cards`: gestión y archivo de tarjetas, compras de

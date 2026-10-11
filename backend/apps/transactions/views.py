@@ -1,10 +1,8 @@
 from collections.abc import Mapping
-from datetime import date
 from decimal import Decimal
 
 from django.db import transaction
 from django.db.models import Count, F, Q, Sum
-from django.utils import timezone
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
@@ -85,6 +83,12 @@ class TenantMixin:
 
 
 @extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter("month", str, description="YYYY-MM; resumen mensual, saldo actual")
+        ]
+    ),
+    retrieve=extend_schema(parameters=[OpenApiParameter("month", str)]),
     create=extend_schema(request=AccountInput, responses=AccountOutput, parameters=[KEY]),
     partial_update=extend_schema(request=AccountInput, responses=AccountOutput, parameters=[KEY]),
 )
@@ -95,7 +99,10 @@ class AccountViewSet(TenantMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return services.accounts(None)
-        return services.accounts(self.membership.household_id).annotate(
+        return services.accounts(
+            self.membership.household_id,
+            services.monthly_period(self.request.query_params.get("month")),
+        ).annotate(
             usage_count=Count(
                 "entries",
                 filter=Q(
@@ -254,14 +261,8 @@ class SummaryView(TenantMixin, APIView):
     def get(self, request):
         Household.objects.select_for_update().get(pk=self.membership.household_id)
         services.authorize(resolve_active_membership(request.user, self.membership.household_id))
-        raw = request.query_params.get("month", timezone.localdate().strftime("%Y-%m"))
-        try:
-            start = date.fromisoformat(raw + "-01")
-        except ValueError as exc:
-            raise ValidationError({"month": "Usá YYYY-MM."}) from exc
-        if start.year == 9999 and start.month == 12:
-            raise ValidationError({"month": "Período fuera de rango."})
-        end = date(start.year + (start.month == 12), start.month % 12 + 1, 1)
+        period = services.monthly_period(request.query_params.get("month"))
+        raw, start, end = period
         current = services.operations(self.membership.household_id).filter(
             status="posted", effective_date__gte=start, effective_date__lt=end
         )
@@ -277,7 +278,13 @@ class SummaryView(TenantMixin, APIView):
         monthly_cards = card_rows.filter(due_date__gte=start, due_date__lt=end)
         expense += monthly_cards.aggregate(total=Sum("amount"))["total"] or Decimal("0")
         pending = card_rows.filter(payment__isnull=True)
-        account_list = list(services.accounts(self.membership.household_id))
+        account_list = list(services.accounts(self.membership.household_id, period))
+        available = {"ARS": Decimal("0")}
+        for account in account_list:
+            if account.is_active and account.kind in {"cash", "bank", "wallet"}:
+                available[account.currency] = (
+                    available.get(account.currency, Decimal("0")) + account.balance
+                )
         distribution = [
             {
                 "category_id": str(item["category_id"]),
@@ -315,6 +322,10 @@ class SummaryView(TenantMixin, APIView):
         return Response(
             SummaryOutput(
                 {
+                    "available_balances": [
+                        {"currency": currency, "amount": amount}
+                        for currency, amount in sorted(available.items())
+                    ],
                     "currency": "ARS",
                     "month": raw,
                     "balance": sum((item.balance for item in account_list), Decimal("0")),

@@ -56,6 +56,32 @@ class VoidInput(StrictSerializer):
 
 
 class AccountOutput(serializers.ModelSerializer):
+    month = serializers.CharField(read_only=True, required=False)
+    monthly_inflow = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+    monthly_outflow = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+    monthly_income = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+    monthly_expense = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+    monthly_opening = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+    monthly_transfer_in = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+    monthly_transfer_out = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+    monthly_card_payments = serializers.DecimalField(
+        max_digits=24, decimal_places=2, read_only=True, required=False
+    )
+
     usage_count = serializers.IntegerField(read_only=True, default=0)
     balance = serializers.DecimalField(max_digits=24, decimal_places=2, read_only=True)
 
@@ -69,6 +95,15 @@ class AccountOutput(serializers.ModelSerializer):
             "description",
             "is_active",
             "balance",
+            "month",
+            "monthly_inflow",
+            "monthly_outflow",
+            "monthly_income",
+            "monthly_expense",
+            "monthly_opening",
+            "monthly_transfer_in",
+            "monthly_transfer_out",
+            "monthly_card_payments",
             "usage_count",
             "created_at",
             "updated_at",
@@ -139,7 +174,13 @@ class AuditOutput(serializers.Serializer):
     created_at = serializers.DateTimeField()
 
 
+class AvailableBalanceOutput(serializers.Serializer):
+    currency = serializers.CharField()
+    amount = serializers.DecimalField(max_digits=24, decimal_places=2)
+
+
 class SummaryOutput(serializers.Serializer):
+    available_balances = AvailableBalanceOutput(many=True)
     currency = serializers.CharField()
     month = serializers.CharField()
     balance = serializers.DecimalField(max_digits=24, decimal_places=2)

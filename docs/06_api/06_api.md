@@ -98,3 +98,21 @@ Listados paginados. Todas las escrituras requieren `Idempotency-Key` UUID y admi
 y `upcoming_installments` (hasta ocho pendientes, vencidas primero). Sus gastos y
 categorías incluyen cuotas del mes por vencimiento, independientemente del pago.
 Pagos visibles como `card_payment` en movimientos, sin edición ni anulación genérica.
+
+## Resumen financiero y cuentas
+
+`GET dashboard/summary/?month=YYYY-MM` conserva los totales mensuales de operaciones
+vigentes y cuotas por vencimiento; aperturas, transferencias y pagos de tarjetas no
+suman ingresos ni gastos. `available_balances` agrega importes por moneda de cuentas
+activas de efectivo, banco y billetera. El núcleo admite actualmente sólo ARS.
+`balance` conserva su significado anterior (saldo consolidado de todas las cuentas).
+Ambos son saldos actuales del núcleo, independientes del período seleccionado.
+
+`GET accounts/?month=YYYY-MM` y `GET accounts/{id}/?month=YYYY-MM` agregan `month`,
+`monthly_inflow`, `monthly_outflow`, `monthly_income`, `monthly_expense`,
+`monthly_opening`, `monthly_transfer_in`, `monthly_transfer_out` y
+`monthly_card_payments`, usando sólo entradas de la revisión vigente no anulada.
+Entradas/salidas incluyen aperturas y transferencias; ingresos/gastos las excluyen.
+Los pagos de tarjeta son salidas y se detallan separadamente, pues las cuotas ya
+integran los gastos del hogar. Sin período se usa el mes local actual; un período
+inválido devuelve 400. No se incorporan modelos ni migraciones.

@@ -31,3 +31,19 @@ nav[aria-label="Navegación móvil"] { padding-bottom: max(.5rem, env(safe-area-
   html { scroll-padding-bottom: 6rem; }
   .finance-card button, .form-input { scroll-margin-bottom: 6rem; }
 }
+
+.dashboard-kpis { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+.available-card { border-radius: 1.5rem; padding: 1.5rem; background: linear-gradient(130deg, #115e59, #0f766e); color: white; box-shadow: 0 12px 28px rgb(15 118 110 / .18); min-width: 0; }
+.kpi-amount { margin-top: .75rem; font-size: clamp(1.6rem, 2.6vw, 2.25rem); font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.available-amount { font-size: clamp(2rem, 3.5vw, 3rem); letter-spacing: -.025em; }
+.dashboard-kpis > article { min-width: 0; }
+.spending-track { height: .75rem; border-radius: 999px; overflow: hidden; background: light-dark(#e2e8f0, #334155); }
+.spending-fill { height: 100%; border-radius: inherit; background: #0f766e; }
+.spending-fill.overspent { background: #dc2626; }
+.period-button { min-width: 44px; min-height: 50px; border: 1px solid light-dark(#cbd5e1, #475569); border-radius: .75rem; font-size: 1.25rem; }
+.account-totals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-top: 1rem; }
+.account-totals dt { font-size: .875rem; color: light-dark(#64748b, #94a3b8); }
+.account-totals dd { margin: .25rem 0 0; font-weight: 700; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+@media (min-width: 640px) { .dashboard-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .available-card { grid-column: span 2; } }
+@media (min-width: 1280px) { .dashboard-kpis { grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(0, 1fr)); } .available-card { grid-column: auto; } }
+.finance-card a.account-balance-row { display: flex; }

@@ -80,3 +80,11 @@ Archivar una tarjeta impide nuevas compras y permite pagar las cuotas pendientes
 
 Aplicar las migraciones normales con `python backend/manage.py migrate`. No se
 implementa ADR-002 ni se transforma el ledger existente a doble partida.
+
+El panel financiero destaca el **saldo disponible actual** de efectivo, bancos y
+billeteras activas, separado de ingresos, gastos y resultado del mes seleccionado.
+La navegación anterior/siguiente y el selector de mes/año actualizan los totales
+mensuales. La barra de gastos frente a ingresos identifica sobregasto. En cuentas
+se puede seleccionar una cuenta y consultar entradas, salidas, ingresos, gastos y
+el detalle de aperturas, transferencias y pagos de tarjeta del período. Los saldos
+siguen siendo actuales al consultar otro mes.
