@@ -1,5 +1,7 @@
 {
   "compileOnSave": false,
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts"],
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist/out-tsc",
