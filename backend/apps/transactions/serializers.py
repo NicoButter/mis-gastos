@@ -102,7 +102,7 @@ class OperationOutput(serializers.ModelSerializer):
         membership = self.context.get("membership")
         return bool(
             membership
-            and obj.type != "opening"
+            and obj.type not in {"opening", "card_payment"}
             and obj.status == "posted"
             and (membership.role in {"owner", "admin"} or membership.user_id == obj.creator_id)
         )
@@ -149,4 +149,6 @@ class SummaryOutput(serializers.Serializer):
     count = serializers.IntegerField()
     accounts = AccountOutput(many=True)
     recent = OperationOutput(many=True)
+    card_pending = serializers.DecimalField(max_digits=24, decimal_places=2)
+    upcoming_installments = serializers.ListField(child=serializers.DictField())
     distribution = serializers.ListField(child=serializers.DictField())

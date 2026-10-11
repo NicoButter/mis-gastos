@@ -9,12 +9,13 @@ class FinancialTransaction(models.Model):
     household = models.ForeignKey("households.Household", on_delete=models.PROTECT)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     type = models.CharField(
-        max_length=10,
+        max_length=12,
         choices=[
             ("opening", "Apertura"),
             ("income", "Ingreso"),
             ("expense", "Gasto"),
             ("transfer", "Transferencia"),
+            ("card_payment", "Pago de tarjeta"),
         ],
     )
     amount = models.DecimalField(max_digits=18, decimal_places=2)
@@ -67,7 +68,11 @@ class FinancialTransaction(models.Model):
                         category__isnull=False,
                         destination__isnull=True,
                     )
-                    | models.Q(type="opening", category__isnull=True, destination__isnull=True)
+                    | models.Q(
+                        type__in=["opening", "card_payment"],
+                        category__isnull=True,
+                        destination__isnull=True,
+                    )
                     | (
                         models.Q(type="transfer", category__isnull=True, destination__isnull=False)
                         & ~models.Q(account=models.F("destination"))

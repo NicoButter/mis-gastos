@@ -118,7 +118,7 @@ def validate_operation(membership, data):
 
 
 def post_entries(obj):
-    sign = -1 if obj.type in {"expense", "transfer"} else 1
+    sign = -1 if obj.type in {"expense", "transfer", "card_payment"} else 1
     entries = [
         LedgerEntry(
             household_id=obj.household_id,
@@ -153,7 +153,11 @@ def write(user, household_id, key, action, data, pk=None):
     membership = HouseholdMembership.objects.select_for_update().get(pk=membership.pk)
     if membership.status != "active":
         raise PermissionDenied("La membresía ya no está activa.")
-    authorize(membership, manage=action.startswith(("account", "category")))
+    authorize(
+        membership,
+        manage=action.startswith(("account", "category"))
+        or action in {"card.create", "card.update"},
+    )
     fingerprint = hashlib.sha256(
         json.dumps(
             {"action": action, "pk": str(pk), "data": data}, cls=DjangoJSONEncoder, sort_keys=True
@@ -164,7 +168,11 @@ def write(user, household_id, key, action, data, pk=None):
         if receipt.fingerprint != fingerprint:
             raise Conflict()
         return receipt.response, True
-    if action == "account.create":
+    if action.startswith("card"):
+        from apps.credit_cards.services import mutate
+
+        result = mutate(membership, action, data, pk)
+    elif action == "account.create":
         fields = dict(data)
         opening = fields.pop("opening_balance")
         date = fields.pop("opening_date")
@@ -230,6 +238,8 @@ def write(user, household_id, key, action, data, pk=None):
             obj = scoped(FinancialTransaction, membership, pk)
             if membership.role == "member" and obj.creator_id != user.pk:
                 raise PermissionDenied("Sólo podés corregir tus propios movimientos.")
+            if obj.type == "card_payment":
+                raise ValidationError("Los pagos de cuotas son inmutables.")
             if obj.type == "opening":
                 raise ValidationError(
                     "La apertura es inmutable; registrá una operación de ajuste explícita."

@@ -171,7 +171,7 @@ class TransactionViewSet(TenantMixin, viewsets.ReadOnlyModelViewSet):
         for key in ["type", "status"]:
             if params.get(key):
                 allowed = (
-                    {"opening", "expense", "income", "transfer"}
+                    {"opening", "expense", "income", "transfer", "card_payment"}
                     if key == "type"
                     else {"posted", "voided"}
                 )
@@ -270,6 +270,13 @@ class SummaryView(TenantMixin, APIView):
             expense=Sum("amount", filter=Q(type="expense")),
         )
         income, expense = totals["income"] or Decimal("0"), totals["expense"] or Decimal("0")
+        from apps.credit_cards.serializers import InstallmentOutput
+        from apps.credit_cards.services import installments
+
+        card_rows = installments(self.membership.household_id)
+        monthly_cards = card_rows.filter(due_date__gte=start, due_date__lt=end)
+        expense += monthly_cards.aggregate(total=Sum("amount"))["total"] or Decimal("0")
+        pending = card_rows.filter(payment__isnull=True)
         account_list = list(services.accounts(self.membership.household_id))
         distribution = [
             {
@@ -282,6 +289,29 @@ class SummaryView(TenantMixin, APIView):
             .annotate(total=Sum("amount"))
             .order_by("-total")
         ]
+        card_distribution = monthly_cards.values(
+            "purchase__category_id", "purchase__category__name"
+        ).annotate(total=Sum("amount"))
+        for item in card_distribution:
+            existing = next(
+                (
+                    row
+                    for row in distribution
+                    if row["category_id"] == str(item["purchase__category_id"])
+                ),
+                None,
+            )
+            if existing:
+                existing["amount"] = str(Decimal(existing["amount"]) + item["total"])
+            else:
+                distribution.append(
+                    {
+                        "category_id": str(item["purchase__category_id"]),
+                        "name": item["purchase__category__name"],
+                        "amount": str(item["total"]),
+                    }
+                )
+        distribution.sort(key=lambda row: Decimal(row["amount"]), reverse=True)
         return Response(
             SummaryOutput(
                 {
@@ -295,6 +325,8 @@ class SummaryView(TenantMixin, APIView):
                     "accounts": account_list,
                     "recent": list(current[:8]),
                     "distribution": distribution,
+                    "card_pending": pending.aggregate(total=Sum("amount"))["total"] or Decimal("0"),
+                    "upcoming_installments": InstallmentOutput(pending[:8], many=True).data,
                 },
                 context={"membership": self.membership},
             ).data

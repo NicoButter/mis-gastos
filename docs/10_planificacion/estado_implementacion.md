@@ -1,3 +1,20 @@
+## Tarjetas simples · 2026-10-10
+
+Implementado el flujo en `/app/cards`: gestión y archivo de tarjetas, compras de
+uno o varios pagos, cuotas exactas con calendario fijo, pendientes por compra y
+mes, pago completo de cada cuota desde cuentas existentes y próximos vencimientos
+en el dashboard. Se reutilizan permisos, hogar activo, auditoría, idempotencia y
+ledger de la Fase 1. El pago `card_payment` descuenta saldo sin duplicar gastos;
+las cuotas se imputan en el resumen por mes de vencimiento. No se implementa
+ADR-002, doble partida ni conversión de datos históricos. Sin PAN ni CVV.
+
+Validación: 63 pruebas backend aprobadas en PostgreSQL temporal, 23 pruebas Angular,
+lint/build, Django check, migraciones sin cambios pendientes y OpenAPI válido.
+Recorrido Chromium real aprobado en escritorio, 360 px y 390 px, incluyendo compra
+en seis cuotas y pago desde cuenta. Las 12 omisiones backend corresponden al
+benchmark opt-in y al POC histórico, fuera de alcance. No se aplicaron migraciones
+sobre la base real ni se hicieron commits/pushes.
+
 # Estado de implementación — Gastio
 
 ## Diseño · Fase 2.0

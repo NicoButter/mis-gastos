@@ -78,3 +78,23 @@ Idempotency-Key: 8c04...UUID
 - Dates `YYYY-MM-DD`; instantes `ISO 8601` con zona; importes como cadena decimal.
 - Escritura con idempotencia para mobile; mutations transaccionales.
 - OpenAPI + pruebas de contrato; esta tabla sirve como diseño inicial, no código ejecutable.
+
+## Tarjetas simples
+
+Endpoints bajo `/api/v1/`, con sesión y hogar activo:
+
+- `credit-cards/`: GET/POST; `credit-cards/{id}/`: GET/PATCH. Campos:
+  `bank`, `name`, `closing_day`, `due_day`, `is_active`.
+- `card-purchases/`: GET/POST; detalle GET. Alta: `card_id`, `category_id`
+  (gasto activa), `description`, `amount`, `purchase_date`, `installments_count`
+  (1–120). Devuelve cuotas con importes, cierres, vencimientos y pendiente.
+- `card-installments/`: GET y detalle GET;
+  `card-installments/{id}/pay/`: POST con `account_id` y `effective_date`.
+  Paga la cuota completa, retorna el pago y la cuenta. Segundo pago con otra clave:
+  409. Reintento idéntico con la misma clave: 200, sin descontar nuevamente.
+
+Listados paginados. Todas las escrituras requieren `Idempotency-Key` UUID y admiten
+`X-Household-ID` para detectar cambios de hogar. El resumen agrega `card_pending`
+y `upcoming_installments` (hasta ocho pendientes, vencidas primero). Sus gastos y
+categorías incluyen cuotas del mes por vencimiento, independientemente del pago.
+Pagos visibles como `card_payment` en movimientos, sin edición ni anulación genérica.

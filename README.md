@@ -61,3 +61,22 @@ npm --prefix frontend run build
 ```
 
 La configuración requiere `DATABASE_URL` PostgreSQL de forma explícita y no usa SQLite como alternativa. Consultá el [estado de implementación](docs/10_planificacion/estado_implementacion.md) para decisiones, supuestos y evidencia. La configuración de Google OAuth/OIDC, incluido el callback exacto y Google Cloud, está en [la guía de autenticación](docs/07_seguridad/08_google_oauth.md).
+
+### Tarjetas de crédito
+
+En `/app/cards` se pueden crear, editar y archivar tarjetas (banco, nombre, día de
+cierre y vencimiento), registrar compras de uno o varios pagos y pagar cada cuota
+desde una cuenta financiera activa. No se solicitan ni almacenan números de tarjeta
+ni CVV. Administran tarjetas propietarios/administradores; los miembros pueden
+registrar compras y pagos. Se conserva el hogar activo, CSRF, auditoría e idempotencia.
+
+Las cuotas distribuyen centavos sin perder el total. Una compra en el día del cierre
+entra en ese ciclo; después del cierre entra en el siguiente. El vencimiento siempre
+es posterior al cierre; los días 29–31 se ajustan al último día disponible. El
+calendario de cada compra queda fijo. Los gastos de tarjeta se incluyen en el resumen
+por mes de vencimiento; `card_payment` descuenta el saldo de la cuenta sin duplicar
+el gasto. Se paga el importe completo de cada cuota; compras y pagos son inmutables.
+Archivar una tarjeta impide nuevas compras y permite pagar las cuotas pendientes.
+
+Aplicar las migraciones normales con `python backend/manage.py migrate`. No se
+implementa ADR-002 ni se transforma el ledger existente a doble partida.

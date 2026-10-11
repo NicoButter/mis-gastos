@@ -7,7 +7,10 @@ export interface FinancialAccount { id: string; name: string; kind: string; curr
 export interface Category { id: string; name: string; type: string; slug: string; is_active: boolean; color: string; usage_count?: number; }
 export interface Operation { id: string; type: string; amount: string; currency: string; effective_date: string; description: string; account_id: string; destination_id: string | null; category_id: string | null; account_name: string; destination_name: string | null; category_name: string | null; creator_name: string; status: string; revision: number; can_edit: boolean; }
 export interface Page<T> { count: number; next: string | null; previous: string | null; results: T[]; }
-export interface Summary { currency: string; month: string; balance: string; income: string; expense: string; net: string; count: number; accounts: FinancialAccount[]; recent: Operation[]; distribution: { name: string; amount: string }[]; }
+export interface CreditCard { id: string; bank: string; name: string; closing_day: number; due_day: number; is_active: boolean; }
+export interface CardInstallment { id: string; number: number; amount: string; closing_date: string; due_date: string; card_name: string; description: string; installments_count: number; payment_id: string | null; paid_date: string | null; account_name: string | null; }
+export interface CardPurchase { id: string; card_id: string; description: string; amount: string; purchase_date: string; installments_count: number; pending_amount: string; installments: CardInstallment[]; }
+export interface Summary { card_pending?: string; upcoming_installments?: CardInstallment[]; currency: string; month: string; balance: string; income: string; expense: string; net: string; count: number; accounts: FinancialAccount[]; recent: Operation[]; distribution: { name: string; amount: string }[]; }
 export interface History { action: string; actor_name: string; before: Record<string, unknown>; after: Record<string, unknown>; created_at: string; }
 
 export function localDate(): string {

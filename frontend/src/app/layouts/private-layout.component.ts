@@ -20,6 +20,7 @@ import { AuthService } from '../core/auth.service';
           <a routerLink="quick" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block min-h-11 rounded-lg px-3 py-3 font-medium">Modo rápido</a>
           <a routerLink="transactions" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block min-h-11 rounded-lg px-3 py-3 font-medium">Movimientos</a>
           <a routerLink="accounts" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block min-h-11 rounded-lg px-3 py-3 font-medium">Cuentas</a>
+          <a routerLink="cards" routerLinkActive="bg-brand-50 text-brand-700" class="block min-h-11 rounded-lg px-3 py-3 font-medium">Tarjetas</a>
           <a routerLink="categories" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block min-h-11 rounded-lg px-3 py-3 font-medium">Categorías</a>
           <a routerLink="households" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block min-h-11 rounded-lg px-3 py-3 font-medium">Hogares</a>
           <a routerLink="settings" routerLinkActive="bg-brand-50 text-brand-700 dark:bg-slate-800 dark:text-teal-300" class="block min-h-11 rounded-lg px-3 py-3 font-medium">Configuración</a>
