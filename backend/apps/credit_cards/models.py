@@ -29,7 +29,11 @@ class CardPurchase(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     household = models.ForeignKey("households.Household", on_delete=models.PROTECT)
     creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
-    card = models.ForeignKey(CreditCard, on_delete=models.PROTECT, related_name="purchases")
+    card = models.ForeignKey(
+        CreditCard, on_delete=models.PROTECT, related_name="purchases", null=True, blank=True
+    )
+    creditor = models.CharField(max_length=200, blank=True)
+    first_due_date = models.DateField(null=True, blank=True)
     category = models.ForeignKey("categories.Category", on_delete=models.PROTECT)
     description = models.CharField(max_length=500)
     amount = models.DecimalField(max_digits=18, decimal_places=2)
@@ -56,7 +60,7 @@ class CardInstallment(models.Model):
     )
     number = models.PositiveSmallIntegerField()
     amount = models.DecimalField(max_digits=18, decimal_places=2)
-    closing_date = models.DateField()
+    closing_date = models.DateField(null=True, blank=True)
     due_date = models.DateField()
     payment = models.OneToOneField(
         "transactions.FinancialTransaction",
@@ -77,3 +81,19 @@ class CardInstallment(models.Model):
             ),
         ]
         indexes = [models.Index(fields=["household", "due_date"])]
+
+
+class InstallmentPayment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    household = models.ForeignKey("households.Household", on_delete=models.PROTECT)
+    installment = models.ForeignKey(
+        CardInstallment, on_delete=models.PROTECT, related_name="payments"
+    )
+    transaction = models.OneToOneField(
+        "transactions.FinancialTransaction",
+        on_delete=models.PROTECT,
+        related_name="installment_payment",
+    )
+
+    class Meta:
+        ordering = ["transaction__effective_date", "id"]

@@ -93,7 +93,7 @@ def accounts(household_id, period=None):
 
 def operations(household_id):
     return FinancialTransaction.objects.filter(household_id=household_id).select_related(
-        "account", "destination", "category", "creator"
+        "account", "destination", "category", "creator", "recurring_occurrence"
     )
 
 
@@ -212,6 +212,10 @@ def write(user, household_id, key, action, data, pk=None):
         from apps.credit_cards.services import mutate
 
         result = mutate(membership, action, data, pk)
+    elif action.startswith("recurring"):
+        from apps.recurring.services import mutate
+
+        result = mutate(membership, action, data, pk)
     elif action == "account.create":
         fields = dict(data)
         opening = fields.pop("opening_balance")
@@ -278,6 +282,8 @@ def write(user, household_id, key, action, data, pk=None):
             obj = scoped(FinancialTransaction, membership, pk)
             if membership.role == "member" and obj.creator_id != user.pk:
                 raise PermissionDenied("Sólo podés corregir tus propios movimientos.")
+            if hasattr(obj, "recurring_occurrence"):
+                raise ValidationError("Los pagos recurrentes son inmutables.")
             if obj.type == "card_payment":
                 raise ValidationError("Los pagos de cuotas son inmutables.")
             if obj.type == "opening":

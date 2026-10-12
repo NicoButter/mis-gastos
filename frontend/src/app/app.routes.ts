@@ -30,6 +30,8 @@ export const appRoutes: Routes = [
       { path: 'quick', title: 'Modo rápido | Gastio', loadComponent: () => import('./features/home/quick-mode-page.component').then((m) => m.QuickModePageComponent) },
       { path: 'transactions', title: 'Movimientos | Gastio', loadComponent: () => import('./features/finance/transactions-page.component').then((m) => m.TransactionsPageComponent) },
       { path: 'accounts', title: 'Cuentas | Gastio', loadComponent: () => import('./features/finance/accounts-page.component').then((m) => m.AccountsPageComponent) },
+      { path: 'installments', title: 'Compras en cuotas | Gastio', data: { installmentsOnly: true }, loadComponent: () => import('./features/finance/cards-page.component').then(m => m.CardsPageComponent) },
+      { path: 'recurring', title: 'Gastos recurrentes | Gastio', loadComponent: () => import('./features/finance/recurring-page.component').then(m => m.RecurringPageComponent) },
       { path: 'cards', title: 'Tarjetas | Gastio', loadComponent: () => import('./features/finance/cards-page.component').then(m => m.CardsPageComponent) },
       { path: 'categories', title: 'Categorías | Gastio', loadComponent: () => import('./features/finance/categories-page.component').then((m) => m.CategoriesPageComponent) },
       { path: 'households', title: 'Hogares | Gastio', data: { title: 'Hogares', detail: 'La gestión de hogares se habilitará junto a autenticación e invitaciones.' }, loadComponent: () => import('./features/home/app-placeholder-page.component').then((m) => m.AppPlaceholderPageComponent) },

@@ -271,13 +271,19 @@ class SummaryView(TenantMixin, APIView):
             expense=Sum("amount", filter=Q(type="expense")),
         )
         income, expense = totals["income"] or Decimal("0"), totals["expense"] or Decimal("0")
+        from apps.credit_cards.models import CardInstallment
         from apps.credit_cards.serializers import InstallmentOutput
         from apps.credit_cards.services import installments
+        from apps.recurring.serializers import OccurrenceOutput
+        from apps.recurring.services import ensure_occurrences, occurrences
 
+        ensure_occurrences(request.user, self.membership.household_id)
         card_rows = installments(self.membership.household_id)
-        monthly_cards = card_rows.filter(due_date__gte=start, due_date__lt=end)
+        monthly_cards = CardInstallment.objects.filter(
+            household_id=self.membership.household_id, due_date__gte=start, due_date__lt=end
+        )
         expense += monthly_cards.aggregate(total=Sum("amount"))["total"] or Decimal("0")
-        pending = card_rows.filter(payment__isnull=True)
+        pending = card_rows.filter(pending_amount__gt=0)
         account_list = list(services.accounts(self.membership.household_id, period))
         available = {"ARS": Decimal("0")}
         for account in account_list:
@@ -336,7 +342,12 @@ class SummaryView(TenantMixin, APIView):
                     "accounts": account_list,
                     "recent": list(current[:8]),
                     "distribution": distribution,
-                    "card_pending": pending.aggregate(total=Sum("amount"))["total"] or Decimal("0"),
+                    "card_pending": pending.aggregate(total=Sum("pending_amount"))["total"]
+                    or Decimal("0"),
+                    "upcoming_recurring": OccurrenceOutput(
+                        occurrences(self.membership.household_id).filter(status="pending")[:8],
+                        many=True,
+                    ).data,
                     "upcoming_installments": InstallmentOutput(pending[:8], many=True).data,
                 },
                 context={"membership": self.membership},

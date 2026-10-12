@@ -116,3 +116,39 @@ Entradas/salidas incluyen aperturas y transferencias; ingresos/gastos las excluy
 Los pagos de tarjeta son salidas y se detallan separadamente, pues las cuotas ya
 integran los gastos del hogar. Sin período se usa el mes local actual; un período
 inválido devuelve 400. No se incorporan modelos ni migraciones.
+
+## Cuotas sin tarjeta y recurrencias
+
+`POST card-purchases/` admite `card_id: null` (u omitido), `description`, `amount`,
+`category_id`, `creditor` opcional, `installments_count`, `first_due_date` y
+`frequency: monthly`. Reutiliza cuotas, redondeo exacto, auditoría e idempotencia.
+La compra no descuenta saldo; las cuotas integran gastos por mes de vencimiento,
+como las cuotas con tarjeta. Los días 29–31 conservan el día original y se ajustan
+al último día disponible del mes.
+
+`POST card-installments/{id}/pay/` admite `amount` para pagos parciales sin tarjeta;
+omitido, paga el pendiente completo. Rechaza importes superiores al pendiente.
+Devuelve `paid_amount`, `pending_amount`, `status` (`pending`, `partial`, `paid`) e
+historial `payments`. Las cuotas de tarjeta conservan el pago completo existente.
+Los abonos usan el tipo interno existente `card_payment`: son salidas de cuenta,
+sin volver a sumar gastos. No se convierten registros históricos.
+
+- `recurring-expenses/`: GET/POST. Alta con `name`, `category_id`, `amount`,
+  `start_date`, `due_day`, `account_id` opcional y frecuencia mensual.
+- `recurring-expenses/{id}/`: GET/PATCH; cambia `status` a `active`, `paused` o
+  `cancelled`. Miembros modifican sus propias reglas; propietarios/admin, todas.
+- `recurring-occurrences/` y `recurring-occurrences/{id}/`: GET;
+  PATCH del detalle cambia únicamente el `amount` de una ocurrencia pendiente.
+- `recurring-occurrences/{id}/pay/`: POST con `effective_date` y `account_id`
+  opcional si la regla ya tiene cuenta. Genera un único gasto vigente y su salida
+  de cuenta. Pagos confirmados son inmutables; otro pago devuelve 409.
+
+Los listados y dashboard materializan obligaciones mensuales hasta dos meses
+adelante (o el primer vencimiento futuro), con claves únicas y auditoría, sin
+registrar gastos ni mover dinero. Pausar/cancelar cancela pendientes de hoy en
+adelante y conserva vencidos e historial. Reanudar recupera vencimientos futuros,
+sin cobrar los ciclos omitidos durante la pausa. Cancelación de la regla definitiva.
+El dashboard agrega `upcoming_recurring`; `card_pending` y `upcoming_installments`
+ahora incluyen cuotas sin tarjeta y sus saldos pendientes tras pagos parciales.
+Todas las escrituras siguen requiriendo `Idempotency-Key`; se mantienen sesión,
+CSRF, hogar activo y validación de referencias del hogar.

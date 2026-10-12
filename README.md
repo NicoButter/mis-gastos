@@ -75,7 +75,8 @@ entra en ese ciclo; después del cierre entra en el siguiente. El vencimiento si
 es posterior al cierre; los días 29–31 se ajustan al último día disponible. El
 calendario de cada compra queda fijo. Los gastos de tarjeta se incluyen en el resumen
 por mes de vencimiento; `card_payment` descuenta el saldo de la cuenta sin duplicar
-el gasto. Se paga el importe completo de cada cuota; compras y pagos son inmutables.
+el gasto. Las cuotas con tarjeta se pagan completas; sin tarjeta se admiten abonos parciales.
+Compras y pagos confirmados son inmutables.
 Archivar una tarjeta impide nuevas compras y permite pagar las cuotas pendientes.
 
 Aplicar las migraciones normales con `python backend/manage.py migrate`. No se
@@ -88,3 +89,19 @@ mensuales. La barra de gastos frente a ingresos identifica sobregasto. En cuenta
 se puede seleccionar una cuenta y consultar entradas, salidas, ingresos, gastos y
 el detalle de aperturas, transferencias y pagos de tarjeta del período. Los saldos
 siguen siendo actuales al consultar otro mes.
+
+### Compras sin tarjeta y gastos recurrentes
+
+En `/app/installments` podés registrar una compra financiada sin tarjeta, con
+acreedor opcional, primera cuota y frecuencia mensual; consultar pendientes y
+pagar cuotas completas o parcialmente desde una cuenta existente. En
+`/app/recurring` podés configurar suscripciones y otros gastos mensuales, cambiar
+el importe de una ocurrencia pendiente, confirmar el pago y pausar, reanudar o
+cancelar conservando el historial. Los vencimientos también aparecen en el panel.
+Las recurrencias sólo generan gasto y descuentan saldo al confirmar su pago.
+Las compras financiadas usan el criterio existente de gasto por vencimiento y sus
+pagos no vuelven a contabilizar el gasto.
+
+Aplicar las migraciones nuevas con `python backend/manage.py migrate`. No se
+implementa ADR-002 ni una nueva arquitectura contable. Las cuotas con tarjeta
+conservan sus pagos completos y los registros históricos existentes.

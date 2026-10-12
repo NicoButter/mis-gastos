@@ -137,6 +137,7 @@ class OperationOutput(serializers.ModelSerializer):
         membership = self.context.get("membership")
         return bool(
             membership
+            and not hasattr(obj, "recurring_occurrence")
             and obj.type not in {"opening", "card_payment"}
             and obj.status == "posted"
             and (membership.role in {"owner", "admin"} or membership.user_id == obj.creator_id)
@@ -191,5 +192,6 @@ class SummaryOutput(serializers.Serializer):
     accounts = AccountOutput(many=True)
     recent = OperationOutput(many=True)
     card_pending = serializers.DecimalField(max_digits=24, decimal_places=2)
+    upcoming_recurring = serializers.ListField(child=serializers.DictField())
     upcoming_installments = serializers.ListField(child=serializers.DictField())
     distribution = serializers.ListField(child=serializers.DictField())

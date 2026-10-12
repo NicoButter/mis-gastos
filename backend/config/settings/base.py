@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     "apps.categories",
     "apps.transactions",
     "apps.credit_cards",
+    "apps.recurring",
     "apps.audit",
 ]
 

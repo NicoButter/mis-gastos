@@ -1,3 +1,22 @@
+## Cuotas sin tarjeta y recurrencias · 2026-10-11
+
+Implementadas `/app/installments` y `/app/recurring`, con navegación y próximos
+compromisos en el dashboard. Las compras reutilizan CardPurchase/CardInstallment
+con tarjeta opcional, acreedor y primera cuota, redondeo exacto e historial de abonos
+parciales. No se descuenta saldo al crear la compra. Los pagos reutilizan el núcleo
+financiero sin duplicar gastos. Las cuotas con tarjeta conservan su flujo completo.
+Recurrencias mensuales generan sólo obligaciones pendientes; al confirmar se registra
+un único gasto y salida. Importe por ocurrencia, pausa/reanudación/cancelación e
+historial auditado; permisos, hogar activo e idempotencia vigentes. Migraciones
+aditivas necesarias, sin conversión de históricos ni ADR-002.
+
+Validación: 74 pruebas backend aprobadas en PostgreSQL temporal (12 opt-in/POC
+omitidas), 36 Angular y 15 recorridos Chromium aprobados en escritorio, 360 y 390 px.
+Se probó bicicleta en tres cuotas con abono parcial y Netflix con importe ajustado,
+pago, pausa y reanudación. Capturas revisadas, sin desbordamiento. Lint/build,
+Django check, OpenAPI y ausencia de migraciones pendientes verificados. No se
+modificó la base real ni se hicieron commits/pushes.
+
 ## Dashboard y resumen por cuenta · 2026-10-10
 
 Saldo disponible actual destacado (efectivo, bancos y billeteras activas), ingresos,
