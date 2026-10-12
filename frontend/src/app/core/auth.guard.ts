@@ -31,4 +31,4 @@ export const householdContextGuard: CanActivateFn = (_route, state) => {
 };
 
 export const authGuard: CanActivateFn = (_route, state) => householdContextGuard(_route, state);
-export const authChildGuard: CanActivateChildFn = (_route, state) => redirectAnonymousUser(state);
+export const authChildGuard: CanActivateChildFn = (_route, state) => householdContextGuard(_route, state);

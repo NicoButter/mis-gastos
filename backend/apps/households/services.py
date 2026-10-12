@@ -10,7 +10,7 @@ from .models import HouseholdMembership
 
 def resolve_active_membership(user, household_id: str | UUID) -> HouseholdMembership:
     """Resolve tenant context server-side before querying tenant-bound objects."""
-    if isinstance(user, AnonymousUser) or not user.is_authenticated:
+    if isinstance(user, AnonymousUser) or not user.is_authenticated or not user.is_active:
         raise NotAuthenticated("Se requiere autenticación.")
     try:
         tenant_id = UUID(str(household_id))
