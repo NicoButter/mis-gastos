@@ -273,7 +273,7 @@ class SummaryView(TenantMixin, APIView):
         income, expense = totals["income"] or Decimal("0"), totals["expense"] or Decimal("0")
         from apps.credit_cards.models import CardInstallment
         from apps.credit_cards.serializers import InstallmentOutput
-        from apps.credit_cards.services import installments
+        from apps.credit_cards.services import installments, purchases
         from apps.recurring.serializers import OccurrenceOutput
         from apps.recurring.services import ensure_occurrences, occurrences
 
@@ -284,6 +284,24 @@ class SummaryView(TenantMixin, APIView):
         )
         expense += monthly_cards.aggregate(total=Sum("amount"))["total"] or Decimal("0")
         pending = card_rows.filter(pending_amount__gt=0)
+        purchase_summaries = []
+        for purchase in purchases(self.membership.household_id).filter(installments_count__gt=1):
+            rows = list(purchase.installments.all())
+            paid_count = sum(row.pending_amount == 0 for row in rows)
+            purchase_summaries.append(
+                {
+                    "id": purchase.pk,
+                    "description": purchase.description,
+                    "card_name": purchase.card.name if purchase.card else None,
+                    "creditor": purchase.creditor,
+                    "amount": purchase.amount,
+                    "installments_count": purchase.installments_count,
+                    "paid_installments": paid_count,
+                    "remaining_installments": purchase.installments_count - paid_count,
+                    "paid_amount": sum((row.paid_amount for row in rows), Decimal("0")),
+                    "pending_amount": sum((row.pending_amount for row in rows), Decimal("0")),
+                }
+            )
         account_list = list(services.accounts(self.membership.household_id, period))
         available = {"ARS": Decimal("0")}
         for account in account_list:
@@ -332,6 +350,7 @@ class SummaryView(TenantMixin, APIView):
                         {"currency": currency, "amount": amount}
                         for currency, amount in sorted(available.items())
                     ],
+                    "installment_purchases": purchase_summaries,
                     "currency": "ARS",
                     "month": raw,
                     "balance": sum((item.balance for item in account_list), Decimal("0")),

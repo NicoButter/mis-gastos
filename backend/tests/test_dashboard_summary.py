@@ -154,3 +154,73 @@ def test_period_defaults_validation_and_decimal_precision(context):
     for month in ["2026-13", "2026-00", "2026-1", "bad", "0000-01", "9999-12", ""]:
         assert client.get("/api/v1/dashboard/summary/", {"month": month}).status_code == 400
         assert client.get("/api/v1/accounts/", {"month": month}).status_code == 400
+
+
+def test_purchase_summary_counts_full_and_partial_payments_without_truncation(context):
+    from tests.test_commitments import financed
+    from tests.test_credit_cards import card, purchase
+
+    client, _, home, _ = context
+    source = account(client, opening="200")
+    card_id = card(client)
+    bought = financed(client, home).data
+    first, second = bought["installments"][:2]
+    assert (
+        post(
+            client,
+            f"card-installments/{first['id']}/pay",
+            {"account_id": source, "effective_date": "2026-10-10"},
+        ).status_code
+        == 200
+    )
+    assert (
+        post(
+            client,
+            f"card-installments/{second['id']}/pay",
+            {"account_id": source, "amount": "5.00", "effective_date": "2026-10-10"},
+        ).status_code
+        == 200
+    )
+    for _ in range(8):
+        assert purchase(client, home, card_id).status_code == 201
+    summary = client.get("/api/v1/dashboard/summary/?month=2026-10").data
+    assert len(summary["installment_purchases"]) == 9
+    row = next(row for row in summary["installment_purchases"] if row["id"] == bought["id"])
+    assert row == {
+        "id": bought["id"],
+        "description": "Bicicleta",
+        "card_name": None,
+        "creditor": "Bicicletería",
+        "amount": "100.00",
+        "installments_count": 3,
+        "paid_installments": 1,
+        "remaining_installments": 2,
+        "paid_amount": "38.34",
+        "pending_amount": "61.66",
+    }
+    # Purchase progress is current regardless of the selected economic month.
+    assert (
+        client.get("/api/v1/dashboard/summary/?month=2026-02").data["installment_purchases"]
+        == summary["installment_purchases"]
+    )
+    for installment in bought["installments"][1:]:
+        assert (
+            post(
+                client,
+                f"card-installments/{installment['id']}/pay",
+                {"account_id": source, "effective_date": "2026-10-10"},
+            ).status_code
+            == 200
+        )
+    completed = client.get("/api/v1/dashboard/summary/?month=2026-10").data
+    row = next(row for row in completed["installment_purchases"] if row["id"] == bought["id"])
+    assert row["paid_installments"] == 3 and row["remaining_installments"] == 0
+    assert row["paid_amount"] == "100.00" and row["pending_amount"] == "0.00"
+    other = Household.objects.create(name="Otro hogar")
+    HouseholdMembership.objects.create(user=context[1], household=other, role="owner")
+    session = client.session
+    session["active_household_id"] = str(other.pk)
+    session.save()
+    assert (
+        client.get("/api/v1/dashboard/summary/?month=2026-10").data["installment_purchases"] == []
+    )

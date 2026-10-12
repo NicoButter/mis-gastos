@@ -45,5 +45,5 @@ nav[aria-label="Navegación móvil"] { padding-bottom: max(.5rem, env(safe-area-
 .account-totals dt { font-size: .875rem; color: light-dark(#64748b, #94a3b8); }
 .account-totals dd { margin: .25rem 0 0; font-weight: 700; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
 @media (min-width: 640px) { .dashboard-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .available-card { grid-column: span 2; } }
-@media (min-width: 1280px) { .dashboard-kpis { grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(0, 1fr)); } .available-card { grid-column: auto; } }
+@media (min-width: 1280px) { .dashboard-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } .available-card { grid-column: auto; } }
 .finance-card a.account-balance-row { display: flex; }

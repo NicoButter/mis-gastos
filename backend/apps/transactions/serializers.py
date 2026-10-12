@@ -180,7 +180,21 @@ class AvailableBalanceOutput(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=24, decimal_places=2)
 
 
+class InstallmentPurchaseSummaryOutput(serializers.Serializer):
+    id = serializers.UUIDField()
+    description = serializers.CharField()
+    card_name = serializers.CharField(allow_null=True)
+    creditor = serializers.CharField(allow_blank=True)
+    amount = serializers.DecimalField(max_digits=24, decimal_places=2)
+    installments_count = serializers.IntegerField()
+    paid_installments = serializers.IntegerField()
+    remaining_installments = serializers.IntegerField()
+    paid_amount = serializers.DecimalField(max_digits=24, decimal_places=2)
+    pending_amount = serializers.DecimalField(max_digits=24, decimal_places=2)
+
+
 class SummaryOutput(serializers.Serializer):
+    installment_purchases = InstallmentPurchaseSummaryOutput(many=True)
     available_balances = AvailableBalanceOutput(many=True)
     currency = serializers.CharField()
     month = serializers.CharField()

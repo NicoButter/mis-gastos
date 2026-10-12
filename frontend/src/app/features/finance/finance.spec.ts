@@ -108,17 +108,46 @@ describe('financial screens', () => {
     await request; expect(fixture.componentInstance.events()).toBeNull();
   });
 
-  it('renders prominent available balance, monthly result and overspending from real summary fields', async () => {
-    finance.read.mockResolvedValue({ ...emptySummary, balance: '999.00', available_balances: [{ currency: 'ARS', amount: '123.45' }], income: '100.00', expense: '150.25', net: '-50.25' });
+  it('renders only dashboard totals, income by account and purchase progress', async () => {
+    finance.read.mockResolvedValue({ ...emptySummary, balance: '999.00', available_balances: [{ currency: 'ARS', amount: '123.45' }], income: '100.00', expense: '150.25', net: '-50.25', accounts: [{ ...account, name: 'Banco', monthly_income: '100.00' }], installment_purchases: [{ id: 'purchase-a', description: 'Heladera', card_name: 'Visa', creditor: '', amount: '600.00', installments_count: 6, paid_installments: 2, remaining_installments: 4, paid_amount: '225.00', pending_amount: '375.00' }] });
     const fixture = TestBed.createComponent(DashboardPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
     const element: HTMLElement = fixture.nativeElement;
     expect(element.querySelector('[data-testid="available-balance"]')?.textContent).toContain('123,45');
     expect(element.querySelector('[data-testid="available-balance"]')?.textContent).not.toContain('999,00');
     expect(element.querySelector('[data-testid="monthly-income"]')?.textContent).toContain('100,00');
     expect(element.querySelector('[data-testid="monthly-expense"]')?.textContent).toContain('150,25');
-    expect(element.querySelector('[data-testid="monthly-net"]')?.textContent).toContain('−$\u00a050,25');
-    expect(element.querySelector('[role="progressbar"]')?.getAttribute('aria-valuetext')).toContain('150,25% · sobregasto');
+    expect(element.querySelector('[data-testid="account-income"]')?.textContent).toContain('Banco');
+    expect(element.querySelector('[data-testid="account-income"]')?.textContent).toContain('100,00');
+    const purchase = element.querySelector('[data-testid="installment-purchase"]')?.textContent;
+    expect(purchase).toContain('2 de 6 cuotas pagadas · 4 pendientes');
+    expect(purchase).toContain('600,00');
+    expect(purchase).toContain('225,00');
+    expect(purchase).toContain('375,00');
+    expect(element.querySelectorAll('.dashboard-kpis > article')).toHaveLength(3);
+    expect(element.querySelectorAll('section')).toHaveLength(2);
+    for (const title of ['Resultado del mes', 'Cuentas y saldos', 'Gastos por categoría', 'Últimos movimientos', 'Próximos gastos recurrentes']) expect(element.textContent).not.toContain(title);
     expect(element.textContent).toContain('Saldo actual');
+  });
+
+  it('includes monthly opening balances in dashboard income without counting transfers or current balances', async () => {
+    finance.read.mockResolvedValue({ ...emptySummary, income: '150.25', accounts: [
+      { ...account, name: 'Sueldo', monthly_income: '100.10', monthly_opening: '1798000.00', monthly_transfer_in: '300.00', balance: '1755000.00' },
+      { ...account, id: 'account-b', name: 'Gremio Judiciales', monthly_income: '50.15', monthly_opening: '345000.00', balance: '345000.00' },
+    ] });
+    const fixture = TestBed.createComponent(DashboardPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
+    const element: HTMLElement = fixture.nativeElement;
+    expect(element.querySelector('[data-testid="monthly-income"] .kpi-amount')?.textContent).toContain('2.143.150,25');
+    const rows = element.querySelectorAll('[data-testid="account-income"]');
+    expect(rows[0].textContent).toContain('1.798.100,10');
+    expect(rows[1].textContent).toContain('345.050,15');
+    expect(element.textContent).toContain('Incluye los saldos iniciales registrados este mes.');
+    finance.read.mockResolvedValue({ ...emptySummary, month: '2026-11', accounts: [
+      { ...account, name: 'Sueldo', monthly_income: '0.00', monthly_opening: '0.00', balance: '1755000.00' },
+    ] });
+    fixture.componentInstance.changePeriod('2026-11'); await fixture.whenStable(); fixture.detectChanges();
+    expect(element.querySelector('[data-testid="monthly-income"] .kpi-amount')?.textContent).toContain('0,00');
+    expect(element.textContent).not.toContain('Incluye los saldos iniciales');
+    expect(fixture.componentInstance.accountIncome({ ...account, monthly_income: '0.01', monthly_opening: '9999999999999999.99' })).toContain('10.000.000.000.000.000,00');
   });
 
   it('changes dashboard period and ignores an older response while preserving the current balance', async () => {
