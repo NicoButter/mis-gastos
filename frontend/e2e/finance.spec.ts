@@ -2,7 +2,7 @@ import { isolateHousehold } from './household';
 import { test, expect, Page } from '@playwright/test';
 
 async function navigate(page: Page, label: string) {
-  const menu = page.getByRole('button', { name: 'Menú', exact: true });
+  const menu = page.getByRole('button', { name: 'Abrir menú', exact: true });
   if (await menu.isVisible()) await menu.click();
   await page.getByRole('navigation', { name: 'Aplicación', exact: true }).getByRole('link', { name: label, exact: true }).click();
   if (await menu.isVisible()) await expect(page.getByRole('navigation', { name: 'Aplicación', exact: true })).toBeHidden();
@@ -67,7 +67,7 @@ test('sesión real, estados vacíos y ciclo financiero completo', async ({ page 
   await page.getByLabel('Importe · ARS').fill('0');
   await expect(page.getByRole('button', { name: 'Guardar gasto' })).toBeDisabled();
   await page.getByLabel('Importe · ARS').fill('5,25');
-  await page.locator('fieldset button[aria-pressed]').first().click();
+  await page.getByLabel('Categoría', { exact: true }).selectOption({ index: 1 });
   await page.getByLabel('Cuenta de origen').selectOption({ label: 'Efectivo E2E' });
   await page.getByRole('button', { name: 'Guardar gasto' }).click();
   await expect(page.getByRole('status')).toContainText('Movimiento guardado');

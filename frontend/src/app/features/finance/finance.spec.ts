@@ -58,6 +58,33 @@ describe('financial screens', () => {
     expect(component.success()).toContain('Podés registrar otro'); expect(component.draft.amount).toBe('');
   });
 
+  it('quick mode defaults to the most used active account and saves a different selected account', async () => {
+    const options = [{ id: 'expense-a', name: 'Alimentos', type: 'expense', is_active: true }, { id: 'income-a', name: 'Sueldo', type: 'income', is_active: true }];
+    finance.all.mockImplementation(async (resource: string) => resource === 'accounts' ? [
+      { ...account, usage_count: 2 },
+      { ...account, id: 'archived', is_active: false, usage_count: 100 },
+      { ...account, id: 'account-b', name: 'Banco', usage_count: 8 },
+    ] : options);
+    const fixture = TestBed.createComponent(OperationFormComponent);
+    fixture.componentRef.setInput('quick', true);
+    fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
+    const component = fixture.componentInstance;
+    expect(component.draft.account_id).toBe('account-b');
+    const category = fixture.nativeElement.querySelector('select[name="category"]') as HTMLSelectElement;
+    expect(Array.from(category.options, option => option.text)).toEqual(['Elegí una categoría', 'Alimentos']);
+    expect(fixture.nativeElement.querySelector('details').open).toBe(false);
+    component.draft.amount = '12,50';
+    category.value = 'expense-a'; category.dispatchEvent(new Event('change'));
+    const accountSelect = fixture.nativeElement.querySelector('select[name="account"]') as HTMLSelectElement;
+    accountSelect.value = account.id; accountSelect.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+    await component.save();
+    expect(finance.write).toHaveBeenCalledWith('transactions/', expect.objectContaining({ amount: '12.50', account_id: account.id, category_id: 'expense-a', effective_date: component.today() }), expect.any(String), false);
+    expect(component.draft.account_id).toBe(account.id);
+    expect(component.draft.category_id).toBe('expense-a');
+    expect(component.draft.amount).toBe('');
+  });
+
   it('displays an empty dashboard with actual zeros and refreshes after writes', async () => {
     const fixture = TestBed.createComponent(DashboardPageComponent); fixture.detectChanges(); await fixture.whenStable(); fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Todavía no hay cuentas'); expect(fixture.nativeElement.textContent).toContain('$ 0,00');
