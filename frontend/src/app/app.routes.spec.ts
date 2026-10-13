@@ -29,8 +29,8 @@ describe('application routes', () => {
     const pages = [
       ['/terminos', 'Términos y condiciones de uso', '13 de octubre de 2026'],
       ['/privacidad', 'Política de privacidad', '13 de octubre de 2026'],
-      ['/como-funciona', 'Cómo funciona Mis Gastos', 'No aplica; guía informativa'],
-      ['/seguridad', 'Seguridad y protección de datos', 'No aplica; resumen informativo'],
+      ['/como-funciona', 'Cómo funciona Mis Gastos', ''],
+      ['/seguridad', 'Seguridad y protección de datos', ''],
     ];
     const harness = await RouterTestingHarness.create();
 
@@ -38,7 +38,14 @@ describe('application routes', () => {
       await harness.navigateByUrl(path);
       expect(TestBed.inject(Router).url).toBe(path);
       expect(harness.routeNativeElement?.textContent).toContain(title);
-      expect(harness.routeNativeElement?.textContent).toContain(status);
+      const content = harness.routeNativeElement?.textContent ?? '';
+      if (status) {
+        expect(content).toContain(status);
+        expect(content).toContain('Vigente desde');
+      } else {
+        expect(harness.routeNativeElement?.querySelector('article dl')).toBeNull();
+      }
+      expect(content).not.toMatch(/No aplica|guía pública|resumen para usuarios/);
       expect(harness.routeNativeElement?.querySelectorAll('article section').length).toBeGreaterThan(5);
       expect(harness.routeNativeElement?.textContent).not.toMatch(/borrador|aprobaci[oó]n|aprobada|estado de publicación|lordcommander|titular de vetrabyte|\[COMPLETAR/i);
     }

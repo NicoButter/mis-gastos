@@ -9,9 +9,9 @@ interface InformationSection {
 
 interface PublicDocument {
   title: string;
-  version: string;
-  preparedDate: string;
-  effectiveDate: string;
+  version?: string;
+  preparedDate?: string;
+  effectiveDate?: string;
   sections: InformationSection[];
 }
 
@@ -221,9 +221,6 @@ const documents: Record<string, PublicDocument> = {
   },
   howItWorks: {
     title: 'Cómo funciona Mis Gastos',
-    version: '0.1 · guía pública',
-    preparedDate: 'Octubre de 2026',
-    effectiveDate: 'No aplica; guía informativa',
     sections: [
       {
         heading: 'Tus gastos, tus cuentas, todo más claro',
@@ -318,9 +315,6 @@ const documents: Record<string, PublicDocument> = {
   },
   security: {
     title: 'Seguridad y protección de datos',
-    version: '0.1 · resumen para usuarios',
-    preparedDate: 'Octubre de 2026',
-    effectiveDate: 'No aplica; resumen informativo',
     sections: [
       {
         heading: 'Sabemos que tus finanzas son privadas',
@@ -393,11 +387,13 @@ const documents: Record<string, PublicDocument> = {
         <header class="mt-8">
           <p class="text-sm font-bold uppercase tracking-[.16em] text-brand-700 dark:text-teal-300">Información pública</p>
           <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{{ document.title }}</h1>
+          @if (document.effectiveDate) {
           <dl class="mt-6 grid gap-3 rounded-2xl border border-slate-200 bg-white p-5 text-sm sm:grid-cols-3 dark:border-slate-800 dark:bg-slate-900">
             <div><dt class="font-bold text-slate-500 dark:text-slate-400">Versión</dt><dd class="mt-1">{{ document.version }}</dd></div>
-            <div><dt class="font-bold text-slate-500 dark:text-slate-400">Fecha del documento</dt><dd class="mt-1">{{ document.preparedDate }}</dd></div>
-            <div><dt class="font-bold text-slate-500 dark:text-slate-400">Vigencia</dt><dd class="mt-1">{{ document.effectiveDate }}</dd></div>
+            <div><dt class="font-bold text-slate-500 dark:text-slate-400">Última actualización</dt><dd class="mt-1">{{ document.preparedDate }}</dd></div>
+            <div><dt class="font-bold text-slate-500 dark:text-slate-400">Vigente desde</dt><dd class="mt-1">{{ document.effectiveDate }}</dd></div>
           </dl>
+          }
         </header>
 
         <div class="mt-8 space-y-8">
