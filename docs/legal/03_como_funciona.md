@@ -1,14 +1,14 @@
-# Cómo funciona Gastio
+# Cómo funciona Mis Gastos
 
 **Versión:** 0.1 · Guía pública · Octubre de 2026
 
 ## Tus gastos, tus cuentas, todo más claro
 
-Gastio te ayuda a llevar un registro de **cuánto dinero entra, cuánto gastás, cuánto tenés disponible y qué pagos se acercan**. Está pensado para personas y familias que quieren organizarse sin conocimientos contables ni planillas complicadas.
+Mis Gastos te ayuda a llevar un registro de **cuánto dinero entra, cuánto gastás, cuánto tenés disponible y qué pagos se acercan**. Está pensado para personas y familias que quieren organizarse sin conocimientos contables ni planillas complicadas.
 
 ## 1. Entrá con Google
 
-Elegí «Continuar con Google». Gastio usa esa cuenta para reconocerte sin pedirte una contraseña nueva. No accede a tus correos de Gmail ni a tus cuentas bancarias por iniciar sesión.
+Elegí «Continuar con Google». Mis Gastos usa esa cuenta para reconocerte sin pedirte una contraseña nueva. No accede a tus correos de Gmail ni a tus cuentas bancarias por iniciar sesión.
 
 ## 2. Creá tu hogar
 
@@ -28,7 +28,7 @@ Podés utilizar la **carga rápida desde el celular** para registrar un gasto co
 
 ## 5. Transferí entre cuentas
 
-Si pasás dinero de un banco a una billetera virtual, registrá una transferencia. Gastio disminuye una cuenta y aumenta la otra, **sin contarlo como un gasto o ingreso nuevo**.
+Si pasás dinero de un banco a una billetera virtual, registrá una transferencia. Mis Gastos disminuye una cuenta y aumenta la otra, **sin contarlo como un gasto o ingreso nuevo**.
 
 ## 6. Controlá tarjetas y cuotas
 
@@ -38,9 +38,9 @@ También podés registrar una **compra en cuotas sin tarjeta**; por ejemplo, una
 
 ## 7. Agendá gastos recurrentes
 
-Netflix, alquiler, internet o seguros pueden configurarse como compromisos mensuales. Gastio muestra los próximos vencimientos y permite confirmar el pago, ajustar importes o pausar la recurrencia.
+Netflix, alquiler, internet o seguros pueden configurarse como compromisos mensuales. Mis Gastos muestra los próximos vencimientos y permite confirmar el pago, ajustar importes o pausar la recurrencia.
 
-**Registrar una recurrencia no significa que Gastio cobre automáticamente ese servicio ni que pague por vos.**
+**Registrar una recurrencia no significa que Mis Gastos cobre automáticamente ese servicio ni que pague por vos.**
 
 ## 8. Mirá el dashboard
 
@@ -53,9 +53,9 @@ En el resumen principal podés consultar:
 
 El saldo disponible no es necesariamente igual a «ingresos menos gastos del mes»: también depende de saldos iniciales, movimientos de otros períodos y pagos efectivos.
 
-## ¿Gastio mueve dinero o se conecta a mi banco?
+## ¿Mis Gastos mueve dinero o se conecta a mi banco?
 
-No. En esta versión, Gastio es una **herramienta de registro manual**. No inicia transferencias, no debita automáticamente tu cuenta y no verifica importes contra tu banco. Vos confirmás los pagos y movimientos que querés registrar.
+No. En esta versión, Mis Gastos es una **herramienta de registro manual**. No inicia transferencias, no debita automáticamente tu cuenta y no verifica importes contra tu banco. Vos confirmás los pagos y movimientos que querés registrar.
 
 ## ¿Mis datos son públicos?
 
@@ -63,7 +63,7 @@ No. La aplicación está diseñada para permitir el acceso de usuarios autentica
 
 ## ¿Puedo equivocarme al registrar algo?
 
-Sí. Gastio contempla la corrección y anulación trazable de movimientos, conforme a las funciones y permisos disponibles. Siempre conviene comparar los datos con comprobantes reales.
+Sí. Mis Gastos contempla la corrección y anulación trazable de movimientos, conforme a las funciones y permisos disponibles. Siempre conviene comparar los datos con comprobantes reales.
 
 ## ¿Necesito conocimientos de finanzas?
 

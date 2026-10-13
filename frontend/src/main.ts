@@ -14,4 +14,4 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(withInterceptors([csrfInterceptor, apiErrorInterceptor])),
     provideAppInitializer(() => inject(AuthService).initialize()),
   ],
-}).catch((error: unknown) => console.error('No se pudo iniciar Gastio', error));
+}).catch((error: unknown) => console.error('No se pudo iniciar Mis Gastos', error));

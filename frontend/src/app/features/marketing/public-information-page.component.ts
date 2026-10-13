@@ -23,22 +23,22 @@ const documents: Record<string, PublicDocument> = {
     effectiveDate: '13 de octubre de 2026',
     sections: [
       {
-        heading: "1. Qué es Gastio",
+        heading: "1. Qué es Mis Gastos",
         paragraphs: [
-          "Gastio es una aplicación para organizar y consultar las finanzas personales y familiares. Permite registrar cuentas, saldos iniciales, ingresos, gastos, transferencias, compras con tarjeta, cuotas, compromisos mensuales y pagos recurrentes.",
-          "Los resúmenes se elaboran a partir de los datos cargados. Gastio no realiza pagos ni transferencias de dinero y no presta asesoramiento financiero, contable, impositivo o jurídico. Marcar una cuota como pagada no realiza el pago fuera de la aplicación.",
+          "Mis Gastos es una aplicación para organizar y consultar las finanzas personales y familiares. Permite registrar cuentas, saldos iniciales, ingresos, gastos, transferencias, compras con tarjeta, cuotas, compromisos mensuales y pagos recurrentes.",
+          "Los resúmenes se elaboran a partir de los datos cargados. Mis Gastos no realiza pagos ni transferencias de dinero y no presta asesoramiento financiero, contable, impositivo o jurídico. Marcar una cuota como pagada no realiza el pago fuera de la aplicación.",
         ],
       },
       {
         heading: "2. Uso del servicio",
         paragraphs: [
-          "El uso de Gastio se rige por estos términos. La Política de privacidad explica cómo se trata la información personal. Las funciones disponibles pueden evolucionar mediante actualizaciones del servicio.",
+          "El uso de Mis Gastos se rige por estos términos. La Política de privacidad explica cómo se trata la información personal. Las funciones disponibles pueden evolucionar mediante actualizaciones del servicio.",
         ],
       },
       {
         heading: "3. Cuenta y acceso con Google",
         paragraphs: [
-          "El acceso se realiza con Google. Gastio utiliza los datos de identidad autorizados para crear o recuperar la cuenta y administrar la sesión.",
+          "El acceso se realiza con Google. Mis Gastos utiliza los datos de identidad autorizados para crear o recuperar la cuenta y administrar la sesión.",
           "Cada usuario debe proteger su cuenta de Google, proporcionar información veraz y cerrar sesión en dispositivos compartidos.",
         ],
       },
@@ -61,21 +61,21 @@ const documents: Record<string, PublicDocument> = {
         heading: "6. Uso permitido",
         paragraphs: [
           "El servicio está destinado a actividades lícitas. No se permite acceder a hogares ajenos, eludir permisos, introducir código malicioso, abusar de la API ni generar tráfico que perjudique la plataforma.",
-          "Gastio podrá limitar el acceso ante abusos comprobados o cuando sea necesario para proteger la integridad del servicio, respetando los derechos aplicables.",
+          "Mis Gastos podrá limitar el acceso ante abusos comprobados o cuando sea necesario para proteger la integridad del servicio, respetando los derechos aplicables.",
         ],
       },
       {
         heading: "7. Disponibilidad y mantenimiento",
         paragraphs: [
           "El servicio puede requerir mantenimiento, actualizaciones o interrupciones. Se procurará informar los cambios relevantes y corregir las incidencias conocidas. Ningún sistema puede garantizar disponibilidad continua o seguridad absoluta.",
-          "Conservá los comprobantes y documentación originales de tus operaciones. Los registros de Gastio no sustituyen la documentación de bancos, emisores de tarjetas o acreedores.",
+          "Conservá los comprobantes y documentación originales de tus operaciones. Los registros de Mis Gastos no sustituyen la documentación de bancos, emisores de tarjetas o acreedores.",
         ],
       },
       {
         heading: "8. Precios y suscripciones",
         paragraphs: [
-          "Esta versión no define planes pagos ni cargos recurrentes de Gastio. Si se incorporan, se informarán previamente el precio, la frecuencia, la forma de pago, la renovación y las condiciones de cancelación, y se solicitará la aceptación correspondiente.",
-          "Los gastos recurrentes registrados por un usuario son sus propios compromisos financieros y no constituyen una suscripción a Gastio.",
+          "Esta versión no define planes pagos ni cargos recurrentes de Mis Gastos. Si se incorporan, se informarán previamente el precio, la frecuencia, la forma de pago, la renovación y las condiciones de cancelación, y se solicitará la aceptación correspondiente.",
+          "Los gastos recurrentes registrados por un usuario son sus propios compromisos financieros y no constituyen una suscripción a Mis Gastos.",
         ],
       },
       {
@@ -88,13 +88,13 @@ const documents: Record<string, PublicDocument> = {
         heading: "10. Cierre de cuenta y datos compartidos",
         paragraphs: [
           "La baja y las solicitudes de eliminación están sujetas a verificación de identidad y a los derechos aplicables. La baja no implica necesariamente la eliminación inmediata de registros compartidos, datos de auditoría o información sujeta a obligaciones de conservación.",
-          "Revocar el acceso desde Google no elimina automáticamente el historial registrado en Gastio.",
+          "Revocar el acceso desde Google no elimina automáticamente el historial registrado en Mis Gastos.",
         ],
       },
       {
         heading: "11. Propiedad intelectual",
         paragraphs: [
-          "El diseño, las marcas, los textos, el código y los elementos originales de Gastio pertenecen a sus respectivos titulares. Su uso se rige por las licencias y condiciones aplicables. Los usuarios conservan los derechos que les correspondan sobre los datos que cargan.",
+          "El diseño, las marcas, los textos, el código y los elementos originales de Mis Gastos pertenecen a sus respectivos titulares. Su uso se rige por las licencias y condiciones aplicables. Los usuarios conservan los derechos que les correspondan sobre los datos que cargan.",
         ],
       },
       {
@@ -125,9 +125,9 @@ const documents: Record<string, PublicDocument> = {
     effectiveDate: '13 de octubre de 2026',
     sections: [
       {
-        heading: "1. Privacidad en Gastio",
+        heading: "1. Privacidad en Mis Gastos",
         paragraphs: [
-          "Gastio trata información personal para prestar el servicio, mantener su seguridad, resolver errores y cumplir las obligaciones aplicables. Los registros financieros de los hogares no se venden ni se publican como datos abiertos.",
+          "Mis Gastos trata información personal para prestar el servicio, mantener su seguridad, resolver errores y cumplir las obligaciones aplicables. Los registros financieros de los hogares no se venden ni se publican como datos abiertos.",
         ],
       },
       {
@@ -161,21 +161,21 @@ const documents: Record<string, PublicDocument> = {
       {
         heading: "6. Autenticación con Google",
         paragraphs: [
-          "Google gestiona la autenticación y comparte los datos de identidad autorizados para ingresar a Gastio. Se utilizan los permisos de identidad, correo y perfil; iniciar sesión no otorga acceso a Gmail, Google Drive, contactos ni cuentas bancarias.",
-          "Podés revisar o revocar el acceso desde tu cuenta de Google. Revocarlo puede impedir futuros ingresos, pero no elimina automáticamente los registros de Gastio. El tratamiento que realiza Google en sus servicios se describe en su propia política de privacidad.",
+          "Google gestiona la autenticación y comparte los datos de identidad autorizados para ingresar a Mis Gastos. Se utilizan los permisos de identidad, correo y perfil; iniciar sesión no otorga acceso a Gmail, Google Drive, contactos ni cuentas bancarias.",
+          "Podés revisar o revocar el acceso desde tu cuenta de Google. Revocarlo puede impedir futuros ingresos, pero no elimina automáticamente los registros de Mis Gastos. El tratamiento que realiza Google en sus servicios se describe en su propia política de privacidad.",
         ],
       },
       {
         heading: "7. Cookies y preferencias",
         paragraphs: [
-          "Gastio utiliza cookies de sesión y de protección CSRF para mantener el acceso y proteger las acciones autenticadas. Las preferencias de interfaz pueden guardarse localmente en el navegador.",
+          "Mis Gastos utiliza cookies de sesión y de protección CSRF para mantener el acceso y proteger las acciones autenticadas. Las preferencias de interfaz pueden guardarse localmente en el navegador.",
           "Si se incorporan tecnologías no esenciales, se informarán sus finalidades y se solicitará el consentimiento que corresponda.",
         ],
       },
       {
         heading: "8. Seguridad",
         paragraphs: [
-          "Gastio utiliza autenticación, controles de acceso por hogar, validaciones de integridad y un historial de operaciones para proteger los registros. Evitá guardar secretos bancarios y protegé la cuenta de Google utilizada para ingresar.",
+          "Mis Gastos utiliza autenticación, controles de acceso por hogar, validaciones de integridad y un historial de operaciones para proteger los registros. Evitá guardar secretos bancarios y protegé la cuenta de Google utilizada para ingresar.",
           "Las medidas de seguridad reducen riesgos, pero ningún sistema puede garantizar que no ocurran incidentes. Consultá también la página de Seguridad y protección de datos.",
         ],
       },
@@ -220,7 +220,7 @@ const documents: Record<string, PublicDocument> = {
     ],
   },
   howItWorks: {
-    title: 'Cómo funciona Gastio',
+    title: 'Cómo funciona Mis Gastos',
     version: '0.1 · guía pública',
     preparedDate: 'Octubre de 2026',
     effectiveDate: 'No aplica; guía informativa',
@@ -228,13 +228,13 @@ const documents: Record<string, PublicDocument> = {
       {
         heading: 'Tus gastos, tus cuentas, todo más claro',
         paragraphs: [
-          'Gastio te ayuda a llevar un registro de cuánto dinero entra, cuánto gastás, cuánto tenés disponible y qué pagos se acercan. Está pensado para personas y familias que quieren organizarse sin conocimientos contables ni planillas complicadas.',
+          'Mis Gastos te ayuda a llevar un registro de cuánto dinero entra, cuánto gastás, cuánto tenés disponible y qué pagos se acercan. Está pensado para personas y familias que quieren organizarse sin conocimientos contables ni planillas complicadas.',
         ],
       },
       {
         heading: '1. Entrá con Google',
         paragraphs: [
-          'Elegí «Continuar con Google». Gastio usa esa cuenta para reconocerte sin pedirte una contraseña nueva. No accede a tus correos de Gmail ni a tus cuentas bancarias por iniciar sesión.',
+          'Elegí «Continuar con Google». Mis Gastos usa esa cuenta para reconocerte sin pedirte una contraseña nueva. No accede a tus correos de Gmail ni a tus cuentas bancarias por iniciar sesión.',
         ],
       },
       {
@@ -260,7 +260,7 @@ const documents: Record<string, PublicDocument> = {
       {
         heading: '5. Transferí entre cuentas',
         paragraphs: [
-          'Si pasás dinero de un banco a una billetera virtual, registrá una transferencia. Gastio disminuye una cuenta y aumenta la otra, sin contarlo como un gasto o ingreso nuevo.',
+          'Si pasás dinero de un banco a una billetera virtual, registrá una transferencia. Mis Gastos disminuye una cuenta y aumenta la otra, sin contarlo como un gasto o ingreso nuevo.',
         ],
       },
       {
@@ -274,7 +274,7 @@ const documents: Record<string, PublicDocument> = {
         heading: '7. Agendá gastos recurrentes',
         paragraphs: [
           'Podés configurar compromisos mensuales, consultar próximos vencimientos, confirmar pagos, ajustar importes o pausar la recurrencia.',
-          'Registrar una recurrencia no significa que Gastio cobre automáticamente el servicio ni que pague por vos.',
+          'Registrar una recurrencia no significa que Mis Gastos cobre automáticamente el servicio ni que pague por vos.',
         ],
       },
       {
@@ -291,9 +291,9 @@ const documents: Record<string, PublicDocument> = {
         ],
       },
       {
-        heading: '¿Gastio mueve dinero o se conecta a mi banco?',
+        heading: '¿Mis Gastos mueve dinero o se conecta a mi banco?',
         paragraphs: [
-          'No. Gastio es una herramienta de registro manual. No inicia transferencias, no debita automáticamente tu cuenta y no verifica importes contra tu banco. Vos confirmás los pagos y movimientos que querés registrar.',
+          'No. Mis Gastos es una herramienta de registro manual. No inicia transferencias, no debita automáticamente tu cuenta y no verifica importes contra tu banco. Vos confirmás los pagos y movimientos que querés registrar.',
         ],
       },
       {
@@ -325,13 +325,13 @@ const documents: Record<string, PublicDocument> = {
       {
         heading: 'Sabemos que tus finanzas son privadas',
         paragraphs: [
-          'Gastio se diseñó para limitar el acceso a los registros financieros y mantener un historial consistente de las operaciones.',
+          'Mis Gastos se diseñó para limitar el acceso a los registros financieros y mantener un historial consistente de las operaciones.',
         ],
       },
       {
         heading: 'Acceso con Google',
         paragraphs: [
-          'Gastio utiliza Google OpenID Connect para identificarte y administra su propia sesión. No te pide una contraseña adicional ni solicita permisos para leer Gmail, contactos o cuentas bancarias.',
+          'Mis Gastos utiliza Google OpenID Connect para identificarte y administra su propia sesión. No te pide una contraseña adicional ni solicita permisos para leer Gmail, contactos o cuentas bancarias.',
         ],
       },
       {
@@ -343,14 +343,14 @@ const documents: Record<string, PublicDocument> = {
       {
         heading: 'Protección de operaciones',
         paragraphs: [
-          'Gastio incluye controles CSRF para acciones autenticadas, verificaciones de permisos, transacciones de base de datos, idempotencia para evitar duplicados accidentales y un historial trazable de correcciones y anulaciones.',
+          'Mis Gastos incluye controles CSRF para acciones autenticadas, verificaciones de permisos, transacciones de base de datos, idempotencia para evitar duplicados accidentales y un historial trazable de correcciones y anulaciones.',
           'Estos controles reducen riesgos, pero no sustituyen una revisión periódica de seguridad ni garantizan que no pueda ocurrir un incidente.',
         ],
       },
       {
         heading: 'Datos de tarjetas',
         paragraphs: [
-          'Gastio permite organizar compras con tarjeta, pero no necesita almacenar el número completo, CVV o PIN. No ingreses datos bancarios secretos en descripciones ni notas.',
+          'Mis Gastos permite organizar compras con tarjeta, pero no necesita almacenar el número completo, CVV o PIN. No ingreses datos bancarios secretos en descripciones ni notas.',
         ],
       },
       {
@@ -384,12 +384,12 @@ const documents: Record<string, PublicDocument> = {
       <a href="#document-content" class="sr-only focus:not-sr-only focus:absolute focus:left-5 focus:top-5 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-slate-950">Saltar al contenido</a>
       <header class="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
         <nav class="mx-auto flex max-w-5xl items-center justify-between px-5 py-4" aria-label="Navegación principal">
-          <a routerLink="/" class="flex items-center gap-2 text-lg font-black text-brand-700 dark:text-teal-300"><img src="/branding/favicon.webp" alt="" aria-hidden="true" class="size-8 object-contain" />Gastio</a>
+          <a routerLink="/" class="flex items-center gap-2 text-lg font-black text-brand-700 dark:text-teal-300"><img src="/branding/mis-gastos-logo.webp" alt="Mis Gastos" class="w-40 h-auto object-contain" /></a>
           <a routerLink="/login" class="rounded-xl px-4 py-2 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800">Ingresar</a>
         </nav>
       </header>
       <article id="document-content" class="mx-auto max-w-3xl px-5 py-10 sm:py-16">
-        <a routerLink="/" class="text-sm font-bold text-brand-700 hover:underline dark:text-teal-300">← Volver a Gastio</a>
+        <a routerLink="/" class="text-sm font-bold text-brand-700 hover:underline dark:text-teal-300">← Volver a Mis Gastos</a>
         <header class="mt-8">
           <p class="text-sm font-bold uppercase tracking-[.16em] text-brand-700 dark:text-teal-300">Información pública</p>
           <h1 class="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{{ document.title }}</h1>
@@ -425,7 +425,7 @@ const documents: Record<string, PublicDocument> = {
           </ul>
         </nav>
       </article>
-      <footer class="border-t border-slate-200 bg-white px-5 py-6 text-center text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">Gastio · Finanzas familiares claras</footer>
+      <footer class="border-t border-slate-200 bg-white px-5 py-6 text-center text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">Mis Gastos · Finanzas familiares claras</footer>
     </main>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -21,7 +21,7 @@ describe('application routes', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/login');
     expect(TestBed.inject(Router).url).toBe('/login');
-    expect(harness.routeNativeElement?.textContent).toContain('Ingresá a Gastio');
+    expect(harness.routeNativeElement?.textContent).toContain('Ingresá a Mis Gastos');
     expect(harness.routeNativeElement?.textContent).toContain('Privacidad');
   });
 
@@ -29,7 +29,7 @@ describe('application routes', () => {
     const pages = [
       ['/terminos', 'Términos y condiciones de uso', '13 de octubre de 2026'],
       ['/privacidad', 'Política de privacidad', '13 de octubre de 2026'],
-      ['/como-funciona', 'Cómo funciona Gastio', 'No aplica; guía informativa'],
+      ['/como-funciona', 'Cómo funciona Mis Gastos', 'No aplica; guía informativa'],
       ['/seguridad', 'Seguridad y protección de datos', 'No aplica; resumen informativo'],
     ];
     const harness = await RouterTestingHarness.create();
@@ -48,7 +48,7 @@ describe('application routes', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/app/transactions');
     expect(TestBed.inject(Router).url).toBe('/login?returnUrl=%2Fapp%2Ftransactions');
-    expect(harness.routeNativeElement?.textContent).toContain('Ingresá a Gastio');
+    expect(harness.routeNativeElement?.textContent).toContain('Ingresá a Mis Gastos');
   });
 
   it('renders a professional not-found route instead of redirecting to the landing', async () => {

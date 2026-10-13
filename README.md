@@ -1,8 +1,8 @@
-# Gastio — Documentación base del producto
+# Mis Gastos — Documentación base del producto
 
 **Estado:** propuesta técnica v0.1 · **Fecha:** 2026-10-08 · **Responsable:** Vetrabyte
 
-Gastio es un SaaS multitenant de finanzas personales y familiares, con una experiencia completa de administración y una interfaz móvil de carga rápida. Se implementará como monolito modular en un único repositorio (backend Django/DRF, frontend Angular/Tailwind, PostgreSQL).
+Mis Gastos es un SaaS multitenant de finanzas personales y familiares, con una experiencia completa de administración y una interfaz móvil de carga rápida. Se implementará como monolito modular en un único repositorio (backend Django/DRF, frontend Angular/Tailwind, PostgreSQL).
 
 ## Índice de lectura recomendado
 

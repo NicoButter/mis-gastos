@@ -1,20 +1,20 @@
-# Gastio — Términos y condiciones de uso
+# Mis Gastos — Términos y condiciones de uso
 
 **Versión:** 0.1 (borrador para revisión)  
 **Fecha de preparación:** 13 de octubre de 2026  
 **Fecha de entrada en vigencia:** [COMPLETAR ANTES DE PUBLICAR]  
-**Prestador del servicio:** [NOMBRE O RAZÓN SOCIAL DEL TITULAR DE VETRABYTE] (en adelante, «Gastio» o «nosotros»)  
+**Prestador del servicio:** [NOMBRE O RAZÓN SOCIAL DEL TITULAR DE VETRABYTE] (en adelante, «Mis Gastos» o «nosotros»)\
 **CUIT y domicilio legal:** [COMPLETAR]  
 **Contacto:** [CORREO DE SOPORTE]  
 **Sitio web oficial:** [DOMINIO DE PRODUCCIÓN]
 
 > **Estado:** documento preliminar. Los campos pendientes, el proceso de baja y la información de tratamiento de datos deben verificarse antes de publicarlo. No reemplaza la revisión jurídica de un profesional de Argentina.
 
-## 1. ¿Qué es Gastio?
+## 1. ¿Qué es Mis Gastos?
 
-Gastio es una aplicación web destinada a **organizar y consultar las finanzas personales y familiares**. Permite registrar cuentas, saldos iniciales, ingresos, gastos, transferencias, compras con tarjeta, cuotas sin tarjeta, compromisos mensuales y pagos recurrentes. También ofrece resúmenes y visualizaciones elaborados a partir de los datos cargados.
+Mis Gastos es una aplicación web destinada a **organizar y consultar las finanzas personales y familiares**. Permite registrar cuentas, saldos iniciales, ingresos, gastos, transferencias, compras con tarjeta, cuotas sin tarjeta, compromisos mensuales y pagos recurrentes. También ofrece resúmenes y visualizaciones elaborados a partir de los datos cargados.
 
-Gastio es una herramienta de **registro y organización**. No es un banco, una billetera digital, una entidad financiera, una pasarela de pagos ni un servicio de asesoramiento financiero, contable, impositivo o jurídico. Registrar una deuda o marcar una cuota como pagada dentro de Gastio no realiza el pago en el mundo real.
+Mis Gastos es una herramienta de **registro y organización**. No es un banco, una billetera digital, una entidad financiera, una pasarela de pagos ni un servicio de asesoramiento financiero, contable, impositivo o jurídico. Registrar una deuda o marcar una cuota como pagada dentro de Mis Gastos no realiza el pago en el mundo real.
 
 ## 2. Aceptación y disponibilidad
 
@@ -24,7 +24,7 @@ Las funciones disponibles pueden evolucionar. Algunas características anunciada
 
 ## 3. Tu cuenta y el acceso con Google
 
-El acceso se realiza mediante Google, utilizando un mecanismo de autenticación OpenID Connect. Google confirma la identidad; Gastio crea o recupera el perfil local y administra su propia sesión.
+El acceso se realiza mediante Google, utilizando un mecanismo de autenticación OpenID Connect. Google confirma la identidad; Mis Gastos crea o recupera el perfil local y administra su propia sesión.
 
 Sos responsable de mantener segura tu cuenta de Google y de cerrar sesión en dispositivos compartidos. Debés proporcionar información veraz y utilizar el servicio de acuerdo con la ley. Si detectás un acceso no autorizado, comunicate con [CORREO DE SEGURIDAD O SOPORTE].
 
@@ -32,7 +32,7 @@ Sos responsable de mantener segura tu cuenta de Google y de cerrar sesión en di
 
 ## 4. Hogares compartidos y permisos
 
-Gastio organiza los datos financieros en **hogares**. Podés pertenecer a más de un hogar y cada hogar posee su propio conjunto de cuentas, movimientos y compromisos.
+Mis Gastos organiza los datos financieros en **hogares**. Podés pertenecer a más de un hogar y cada hogar posee su propio conjunto de cuentas, movimientos y compromisos.
 
 Los integrantes autorizados de un hogar pueden acceder a la información compartida dentro de los permisos otorgados por la aplicación. Por eso, **no cargues información que no quieras compartir con los demás integrantes autorizados de ese hogar**.
 
@@ -42,7 +42,7 @@ La presencia de una persona en un hogar no le confiere autorización sobre otros
 
 ## 5. Datos financieros y exactitud
 
-Los importes, categorías, fechas, saldos iniciales, cuotas y vencimientos se basan en la información ingresada o confirmada por quienes utilizan Gastio.
+Los importes, categorías, fechas, saldos iniciales, cuotas y vencimientos se basan en la información ingresada o confirmada por quienes utilizan Mis Gastos.
 
 - Un **saldo inicial** no se considera automáticamente un ingreso del mes.
 - Una **transferencia entre cuentas** modifica saldos pero no crea por sí misma un ingreso o gasto nuevo.
@@ -50,7 +50,7 @@ Los importes, categorías, fechas, saldos iniciales, cuotas y vencimientos se ba
 - Un **gasto recurrente** registra un compromiso periódico; solo se refleja el pago efectivo cuando se confirma según el funcionamiento del servicio.
 - Los **pagos de tarjeta o de cuotas** deben distinguirse de las compras de origen para evitar la doble contabilización.
 
-Podés corregir o anular movimientos conforme a los permisos y funciones disponibles, preservando la trazabilidad necesaria para la integridad del registro. Revisá siempre los importes frente a tus comprobantes, extractos y acuerdos reales: **Gastio no sustituye la documentación de bancos, emisores de tarjetas o acreedores**.
+Podés corregir o anular movimientos conforme a los permisos y funciones disponibles, preservando la trazabilidad necesaria para la integridad del registro. Revisá siempre los importes frente a tus comprobantes, extractos y acuerdos reales: **Mis Gastos no sustituye la documentación de bancos, emisores de tarjetas o acreedores**.
 
 ## 6. Uso permitido y prohibiciones
 
@@ -66,11 +66,11 @@ El alcance de las copias de seguridad, recuperación y exportación de datos deb
 
 ## 8. Precios y suscripciones
 
-**La presente versión de Gastio no define planes pagos ni cargos recurrentes de la plataforma.** No se realizará un cobro por una suscripción comercial sin informar previamente el precio, frecuencia, forma de pago, renovación, impuestos aplicables y condiciones de cancelación, y obtener la aceptación que corresponda.
+**La presente versión de Mis Gastos no define planes pagos ni cargos recurrentes de la plataforma.** No se realizará un cobro por una suscripción comercial sin informar previamente el precio, frecuencia, forma de pago, renovación, impuestos aplicables y condiciones de cancelación, y obtener la aceptación que corresponda.
 
 Si se incorporan planes pagos, se publicarán condiciones particulares antes de habilitar la contratación. Se respetarán los derechos del consumidor, incluida la revocación y los mecanismos de baja que resulten legalmente aplicables.
 
-> Importante: los «gastos recurrentes» que el usuario registra en Gastio (por ejemplo, Netflix) son obligaciones personales registradas por el usuario; **no son una suscripción paga a Gastio**.
+> Importante: los «gastos recurrentes» que el usuario registra en Mis Gastos (por ejemplo, Netflix) son obligaciones personales registradas por el usuario; **no son una suscripción paga a Mis Gastos**.
 
 ## 9. Privacidad
 
@@ -86,11 +86,11 @@ La baja de una cuenta no necesariamente elimina de manera inmediata toda la info
 
 ## 11. Propiedad intelectual
 
-Gastio, su diseño, marcas, textos, código y elementos originales pertenecen a sus respectivos titulares. Se concede un permiso de utilización no exclusivo para acceder al servicio conforme a estos términos. Los usuarios conservan los derechos que les correspondan sobre los datos que cargan.
+Mis Gastos, su diseño, marcas, textos, código y elementos originales pertenecen a sus respectivos titulares. Se concede un permiso de utilización no exclusivo para acceder al servicio conforme a estos términos. Los usuarios conservan los derechos que les correspondan sobre los datos que cargan.
 
 ## 12. Responsabilidad y atención al usuario
 
-Gastio ofrece información de organización financiera basada en registros de los usuarios. Debés verificar que los datos y operaciones reflejen tu situación real antes de tomar decisiones económicas.
+Mis Gastos ofrece información de organización financiera basada en registros de los usuarios. Debés verificar que los datos y operaciones reflejen tu situación real antes de tomar decisiones económicas.
 
 Estos términos **no excluyen ni limitan derechos irrenunciables** de consumidores ni responsabilidades que no puedan excluirse legalmente. Para consultas, errores o reclamos, escribinos a [CORREO DE SOPORTE].
 
@@ -104,4 +104,4 @@ Estos términos se interpretan conforme a las normas aplicables en la República
 
 ---
 
-**Documentación relacionada:** [Política de privacidad](./02_politica_de_privacidad.md) · [Cómo funciona Gastio](./03_como_funciona.md) · [Seguridad y protección de datos](./04_seguridad_y_datos.md)
+**Documentación relacionada:** [Política de privacidad](./02_politica_de_privacidad.md) · [Cómo funciona Mis Gastos](./03_como_funciona.md) · [Seguridad y protección de datos](./04_seguridad_y_datos.md)

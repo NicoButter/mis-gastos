@@ -1,6 +1,6 @@
 {
-  "name": "Gastio",
-  "short_name": "Gastio",
+  "name": "Mis Gastos",
+  "short_name": "Mis Gastos",
   "theme_color": "#0f766e",
   "background_color": "#f8fafc",
   "display": "standalone",

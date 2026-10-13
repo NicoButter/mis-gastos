@@ -1,4 +1,4 @@
-# Gastio — Política de privacidad
+# Mis Gastos — Política de privacidad
 
 **Versión:** 0.1 (borrador para revisión)  
 **Fecha de preparación:** 13 de octubre de 2026  
@@ -8,11 +8,11 @@
 **Contacto para ejercer derechos:** [CORREO DE PRIVACIDAD]  
 **Sitio web:** [DOMINIO DE PRODUCCIÓN]
 
-> Este documento describe el funcionamiento conocido de Gastio. Los datos sobre proveedores de alojamiento, países de almacenamiento, copias de seguridad, plazos de retención y canales de derechos **deben verificarse e incorporarse antes de su publicación**.
+> Este documento describe el funcionamiento conocido de Mis Gastos. Los datos sobre proveedores de alojamiento, países de almacenamiento, copias de seguridad, plazos de retención y canales de derechos **deben verificarse e incorporarse antes de su publicación**.
 
 ## 1. Nuestro compromiso
 
-En Gastio entendemos que los registros de ingresos, gastos, deudas y presupuestos son información privada. Tratamos los datos para ofrecer el servicio, mantener su seguridad, solucionar errores y cumplir las obligaciones aplicables. **No usamos tus registros financieros para vender perfiles comerciales ni los publicamos como datos abiertos.** Esta declaración debe mantenerse coherente con las operaciones reales del servicio.
+En Mis Gastos entendemos que los registros de ingresos, gastos, deudas y presupuestos son información privada. Tratamos los datos para ofrecer el servicio, mantener su seguridad, solucionar errores y cumplir las obligaciones aplicables. **No usamos tus registros financieros para vender perfiles comerciales ni los publicamos como datos abiertos.** Esta declaración debe mantenerse coherente con las operaciones reales del servicio.
 
 ## 2. Qué datos podemos tratar
 
@@ -26,7 +26,7 @@ En Gastio entendemos que los registros de ingresos, gastos, deudas y presupuesto
 
 **Información técnica y de seguridad:** dirección IP, datos técnicos de conexión y navegador, cookies necesarias, fechas de acceso, errores, intentos de autenticación y registros de actividad, según lo que efectivamente recojan y conserven los sistemas de producción.
 
-Gastio no requiere que cargues números completos de tarjetas, códigos CVV, claves de home banking ni contraseñas de entidades financieras. **No ingreses estos datos en campos libres o descripciones**.
+Mis Gastos no requiere que cargues números completos de tarjetas, códigos CVV, claves de home banking ni contraseñas de entidades financieras. **No ingreses estos datos en campos libres o descripciones**.
 
 ## 3. Para qué usamos los datos
 
@@ -56,13 +56,13 @@ No vendemos ni publicamos el historial financiero de los hogares.
 
 ## 6. Acceso con Google
 
-Al elegir «Continuar con Google», Google gestiona la autenticación y comparte los datos de identidad autorizados por vos para permitir el ingreso a Gastio. Gastio conserva una cuenta y sesión propias. Podés revisar o revocar el acceso concedido desde la configuración de tu cuenta Google; revocarlo puede impedir futuros ingresos hasta reautorizar el servicio, pero **no implica por sí mismo la eliminación automática de tu historial de Gastio**.
+Al elegir «Continuar con Google», Google gestiona la autenticación y comparte los datos de identidad autorizados por vos para permitir el ingreso a Mis Gastos. Mis Gastos conserva una cuenta y sesión propias. Podés revisar o revocar el acceso concedido desde la configuración de tu cuenta Google; revocarlo puede impedir futuros ingresos hasta reautorizar el servicio, pero **no implica por sí mismo la eliminación automática de tu historial de Mis Gastos**.
 
 Para conocer cómo trata Google los datos en sus propios servicios, consultá su política de privacidad: https://policies.google.com/privacy
 
 ## 7. Cookies y tecnologías equivalentes
 
-Gastio utiliza cookies y mecanismos técnicos necesarios para **mantener la sesión, prevenir solicitudes no autorizadas y permitir la navegación autenticada**. Su existencia, nombre y duración exactos deben confirmarse en producción.
+Mis Gastos utiliza cookies y mecanismos técnicos necesarios para **mantener la sesión, prevenir solicitudes no autorizadas y permitir la navegación autenticada**. Su existencia, nombre y duración exactos deben confirmarse en producción.
 
 | Categoría | Uso previsto | Situación |
 |---|---|---|

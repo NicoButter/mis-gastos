@@ -1,10 +1,10 @@
-# Gastio — Revisión previa a publicar textos legales
+# Mis Gastos — Revisión previa a publicar textos legales
 
 **Este archivo es interno; NO debe mostrarse como página pública.**
 
 ## Identidad y atención al usuario
 
-- [ ] Confirmar nombre o razón social legal que opera Gastio (Vetrabyte es marca, no necesariamente sujeto legal).
+- [ ] Confirmar nombre o razón social legal que opera Mis Gastos (Vetrabyte es marca, no necesariamente sujeto legal).
 - [ ] CUIT, domicilio y correo válido de contacto/privacidad/seguridad.
 - [ ] Dominio final del servicio y rutas públicas.
 - [ ] Revisar términos y política con profesional legal argentino.
@@ -30,12 +30,12 @@
 - [ ] Mantener versión, fecha de entrada en vigencia e historial de cambios.
 - [ ] Garantizar accesibilidad móvil y enlaces claros.
 
-## Si se habilitan suscripciones comerciales a Gastio
+## Si se habilitan suscripciones comerciales a Mis Gastos
 
 - [ ] Informar precio total, impuestos, frecuencia, renovaciones y condiciones antes del cobro.
 - [ ] Implementar mecanismos de baja, confirmación y, cuando aplique, botón de arrepentimiento según normativa argentina vigente.
 - [ ] Revisar ley 24.240, Disposición 954/2025 y Disposición 3/2026 según el modelo comercial efectivo.
-- [ ] No confundir los pagos recurrentes que el usuario registra con las suscripciones comerciales de Gastio.
+- [ ] No confundir los pagos recurrentes que el usuario registra con las suscripciones comerciales de Mis Gastos.
 
 ## Fuentes de referencia oficial (consultadas en octubre de 2026)
 

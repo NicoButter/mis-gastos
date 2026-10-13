@@ -9,7 +9,7 @@ import { AuthService } from '../core/auth.service';
   template: `
     <div class="min-h-screen bg-surface dark:bg-slate-950">
       <header class="app-header flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 lg:justify-start lg:gap-3" [class.desktop-sidebar-open]="!desktopCollapsed()">
-        <span class="flex items-center gap-2 font-black text-brand-700 dark:text-teal-300"><img src="/branding/favicon.webp" alt="" aria-hidden="true" class="size-8 object-contain" />Gastio</span>
+        <span class="flex items-center gap-2 font-black text-brand-700 dark:text-teal-300"><img src="/branding/mis-gastos-logo.webp" alt="Mis Gastos" class="w-40 h-auto object-contain" /></span>
         <button type="button" class="sidebar-toggle lg:hidden" (click)="mobileOpen.set(!mobileOpen())" aria-controls="app-sidebar" [attr.aria-expanded]="mobileOpen()" [attr.aria-label]="mobileOpen() ? 'Cerrar menú' : 'Abrir menú'" title="Menú">
           <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M9 4v16" /></svg>
         </button>
@@ -20,7 +20,7 @@ import { AuthService } from '../core/auth.service';
       <button type="button" class="sidebar-backdrop fixed inset-0 z-20 bg-slate-950/40 lg:hidden" [class.is-open]="mobileOpen()" aria-label="Cerrar menú" (click)="mobileOpen.set(false)"></button>
       <aside id="app-sidebar" class="app-sidebar fixed inset-y-0 left-0 z-30 w-72 max-w-full overflow-y-auto border-r border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900" [class.mobile-open]="mobileOpen()" [class.desktop-collapsed]="desktopCollapsed()">
         <div class="flex items-center justify-between">
-          <span class="flex items-center gap-2 text-xl font-black text-brand-700 dark:text-teal-300"><img src="/branding/favicon.webp" alt="" aria-hidden="true" class="size-9 object-contain" />Gastio</span>
+          <span class="flex items-center gap-2 text-xl font-black text-brand-700 dark:text-teal-300"><img src="/branding/mis-gastos-logo.webp" alt="Mis Gastos" class="w-44 h-auto object-contain" /></span>
           <button class="sidebar-toggle lg:hidden" type="button" (click)="mobileOpen.set(false)" aria-controls="app-sidebar" aria-expanded="true" aria-label="Cerrar menú" title="Cerrar menú">
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m6 6 12 12M6 18 18 6" /></svg>
           </button>

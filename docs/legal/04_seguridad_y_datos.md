@@ -1,14 +1,14 @@
-# Cómo cuidamos tus datos en Gastio
+# Cómo cuidamos tus datos en Mis Gastos
 
 **Versión:** 0.1 · Resumen de seguridad para usuarios · Octubre de 2026
 
 ## Sabemos que tus finanzas son privadas
 
-Cuando registrás cuánto cobrás, qué comprás o qué pagos tenés pendientes, estás confiando información importante. Por eso, Gastio se diseñó para limitar el acceso a esos registros y mantener un historial consistente de las operaciones.
+Cuando registrás cuánto cobrás, qué comprás o qué pagos tenés pendientes, estás confiando información importante. Por eso, Mis Gastos se diseñó para limitar el acceso a esos registros y mantener un historial consistente de las operaciones.
 
 ## Autenticación con Google
 
-Utilizamos Google OpenID Connect para identificarte, y Gastio administra su propia sesión. No te pedimos una contraseña adicional para Gastio ni solicitamos permisos para leer tu Gmail, tus contactos o tus cuentas bancarias.
+Utilizamos Google OpenID Connect para identificarte, y Mis Gastos administra su propia sesión. No te pedimos una contraseña adicional para Mis Gastos ni solicitamos permisos para leer tu Gmail, tus contactos o tus cuentas bancarias.
 
 ## Hogares separados
 
@@ -22,7 +22,7 @@ Estos controles reducen riesgos, pero no sustituyen una revisión periódica de 
 
 ## Tarjetas sin datos innecesarios
 
-Gastio permite organizar compras con tarjeta, pero no necesita almacenar el número completo, el CVV o el PIN. No ingreses datos bancarios secretos en descripciones ni notas.
+Mis Gastos permite organizar compras con tarjeta, pero no necesita almacenar el número completo, el CVV o el PIN. No ingreses datos bancarios secretos en descripciones ni notas.
 
 ## Comunicación y alojamiento
 
