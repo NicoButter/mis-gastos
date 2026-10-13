@@ -21,7 +21,7 @@ import { AuthService } from '../../core/auth.service';
               <span>Leí y acepto los <a routerLink="/terminos" class="font-bold text-brand-700 underline dark:text-teal-300">Términos y condiciones</a> versión {{ auth.termsVersion() }}. También puedo consultar la <a routerLink="/privacidad" class="font-bold text-brand-700 underline dark:text-teal-300">Política de privacidad</a>.</span>
             </label>
           } @else {
-            <p class="text-sm leading-6 text-slate-600 dark:text-slate-300">La aceptación de términos se habilitará cuando haya una versión aprobada y publicada. No se registra aceptación de un borrador.</p>
+            <p class="text-sm leading-6 text-slate-600 dark:text-slate-300">Consultá los <a routerLink="/terminos" class="font-bold text-brand-700 underline dark:text-teal-300">Términos y condiciones</a> y la <a routerLink="/privacidad" class="font-bold text-brand-700 underline dark:text-teal-300">Política de privacidad</a> de Gastio.</p>
           }
           @if (auth.error()) { <p class="text-sm font-semibold text-rose-700 dark:text-rose-300">{{ auth.error() }}</p> }
           <button type="submit" [disabled]="auth.isLoading() || !name.trim() || (!!auth.termsVersion() && !acceptTerms)" class="w-full rounded-xl bg-brand-700 px-4 py-3 font-bold text-white disabled:opacity-50">{{ auth.isLoading() ? 'Creando…' : 'Crear hogar' }}</button>

@@ -25,10 +25,10 @@ describe('application routes', () => {
     expect(harness.routeNativeElement?.textContent).toContain('Privacidad');
   });
 
-  it('serves all information pages publicly and identifies pending legal documents', async () => {
+  it('serves complete information pages publicly', async () => {
     const pages = [
-      ['/terminos', 'Términos y condiciones de uso', 'No vigente; pendiente de aprobación'],
-      ['/privacidad', 'Política de privacidad', 'No vigente; pendiente de aprobación'],
+      ['/terminos', 'Términos y condiciones de uso', '13 de octubre de 2026'],
+      ['/privacidad', 'Política de privacidad', '13 de octubre de 2026'],
       ['/como-funciona', 'Cómo funciona Gastio', 'No aplica; guía informativa'],
       ['/seguridad', 'Seguridad y protección de datos', 'No aplica; resumen informativo'],
     ];
@@ -39,6 +39,8 @@ describe('application routes', () => {
       expect(TestBed.inject(Router).url).toBe(path);
       expect(harness.routeNativeElement?.textContent).toContain(title);
       expect(harness.routeNativeElement?.textContent).toContain(status);
+      expect(harness.routeNativeElement?.querySelectorAll('article section').length).toBeGreaterThan(5);
+      expect(harness.routeNativeElement?.textContent).not.toMatch(/borrador|aprobaci[oó]n|aprobada|estado de publicación|lordcommander|titular de vetrabyte|\[COMPLETAR/i);
     }
   });
 
