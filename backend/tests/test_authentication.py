@@ -100,6 +100,36 @@ def test_onboarding_explicitly_creates_the_first_household_and_owner_membership(
     assert membership.household.name == "Mi hogar"
     assert membership.role == HouseholdMembership.Role.OWNER
     assert response.json()["activeHousehold"]["id"] == str(membership.household_id)
+    user.refresh_from_db()
+    assert user.terms_accepted_version == ""
+    assert user.terms_accepted_at is None
+
+
+@pytest.mark.django_db
+@override_settings(GASTIO_TERMS_VERSION="2026-10-v1")
+def test_onboarding_requires_and_persists_the_active_terms_version():
+    user = User.objects.create_user("terms@example.com", "password")
+    client = APIClient()
+    client.force_authenticate(user)
+
+    missing = client.post("/api/v1/households/", {"name": "Mi hogar"})
+    wrong = client.post(
+        "/api/v1/households/", {"name": "Mi hogar", "termsVersion": "0.1"}
+    )
+
+    assert missing.status_code == 400
+    assert wrong.status_code == 400
+    assert not Household.objects.exists()
+
+    response = client.post(
+        "/api/v1/households/",
+        {"name": "Mi hogar", "termsVersion": "2026-10-v1"},
+    )
+
+    assert response.status_code == 201
+    user.refresh_from_db()
+    assert user.terms_accepted_version == "2026-10-v1"
+    assert user.terms_accepted_at is not None
 
 
 @pytest.mark.django_db
@@ -142,11 +172,22 @@ def test_unlinked_google_email_cannot_silently_take_over_an_existing_user():
     assert User.objects.filter(email=existing.email).count() == 1
 
 
-@override_settings(GOOGLE_OAUTH_CONFIGURED=False)
+@override_settings(GOOGLE_OAUTH_CONFIGURED=False, GASTIO_TERMS_VERSION="")
 def test_auth_configuration_reports_missing_google_credentials_safely():
     response = APIClient().get("/api/v1/auth/config/")
     assert response.status_code == 200
-    assert response.json() == {"googleLoginEnabled": False}
+    assert response.json() == {"googleLoginEnabled": False, "termsVersion": None}
+
+
+@override_settings(GOOGLE_OAUTH_CONFIGURED=True, GASTIO_TERMS_VERSION="2026-10-v1")
+def test_auth_configuration_exposes_only_the_active_terms_version():
+    response = APIClient().get("/api/v1/auth/config/")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "googleLoginEnabled": True,
+        "termsVersion": "2026-10-v1",
+    }
 
 
 @pytest.mark.django_db

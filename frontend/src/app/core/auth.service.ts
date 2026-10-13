@@ -39,6 +39,7 @@ export class AuthService {
   readonly activeHousehold = signal<ActiveHousehold | null>(null);
   readonly households = signal<ActiveHousehold[]>([]);
   readonly googleLoginEnabled = signal(false);
+  readonly termsVersion = signal<string | null>(null);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
   readonly isAuthenticated = computed(() => this.status() === 'authenticated');
@@ -47,8 +48,9 @@ export class AuthService {
     this.isLoading.set(true);
     this.error.set(null);
     try {
-      const configuration = await firstValueFrom(this.http.get<{ googleLoginEnabled: boolean }>(this.configurationEndpoint));
+      const configuration = await firstValueFrom(this.http.get<{ googleLoginEnabled: boolean; termsVersion: string | null }>(this.configurationEndpoint));
       this.googleLoginEnabled.set(configuration.googleLoginEnabled);
+      this.termsVersion.set(configuration.termsVersion);
       const session = await firstValueFrom(this.http.get<SessionResponse>(this.sessionEndpoint));
       this.applySession(session);
     } catch (error: unknown) {
@@ -108,11 +110,12 @@ export class AuthService {
     }
   }
 
-  async createFirstHousehold(name: string): Promise<boolean> {
+  async createFirstHousehold(name: string, termsVersion?: string): Promise<boolean> {
     this.isLoading.set(true);
     this.error.set(null);
     try {
-      const response = await firstValueFrom(this.http.post<{ activeHousehold: ActiveHousehold }>(this.householdsEndpoint, { name }));
+      const payload = termsVersion ? { name, termsVersion } : { name };
+      const response = await firstValueFrom(this.http.post<{ activeHousehold: ActiveHousehold }>(this.householdsEndpoint, payload));
       this.activeHousehold.set(response.activeHousehold);
       this.households.update((items) => [...items, response.activeHousehold]);
       return true;

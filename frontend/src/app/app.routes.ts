@@ -14,6 +14,10 @@ export const appRoutes: Routes = [
         title: 'Gastio | Finanzas familiares claras',
         loadComponent: () => import('./features/marketing/landing-page.component').then((m) => m.LandingPageComponent),
       },
+      { path: 'terminos', title: 'Términos y condiciones | Gastio', data: { document: 'terms' }, loadComponent: () => import('./features/marketing/public-information-page.component').then((m) => m.PublicInformationPageComponent) },
+      { path: 'privacidad', title: 'Política de privacidad | Gastio', data: { document: 'privacy' }, loadComponent: () => import('./features/marketing/public-information-page.component').then((m) => m.PublicInformationPageComponent) },
+      { path: 'como-funciona', title: 'Cómo funciona | Gastio', data: { document: 'howItWorks' }, loadComponent: () => import('./features/marketing/public-information-page.component').then((m) => m.PublicInformationPageComponent) },
+      { path: 'seguridad', title: 'Seguridad y datos | Gastio', data: { document: 'security' }, loadComponent: () => import('./features/marketing/public-information-page.component').then((m) => m.PublicInformationPageComponent) },
     ],
   },
   {

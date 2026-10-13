@@ -6,6 +6,7 @@ from allauth.socialaccount.models import SocialAccount
 from django.conf import settings
 from django.db import transaction
 from django.middleware.csrf import get_token
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_spectacular.utils import extend_schema
@@ -134,6 +135,10 @@ class HouseholdCreateView(APIView):
         serializer.is_valid(raise_exception=True)
         name = serializer.validated_data["name"]
         with transaction.atomic():
+            if settings.GASTIO_TERMS_VERSION:
+                request.user.terms_accepted_version = settings.GASTIO_TERMS_VERSION
+                request.user.terms_accepted_at = timezone.now()
+                request.user.save(update_fields=["terms_accepted_version", "terms_accepted_at"])
             household = Household.objects.create(name=name)
             membership = HouseholdMembership.objects.create(
                 user=request.user,
@@ -168,4 +173,7 @@ class AuthConfigurationView(APIView):
 
     @extend_schema(responses=AuthConfigurationOutput)
     def get(self, request):
-        return Response({"googleLoginEnabled": settings.GOOGLE_OAUTH_CONFIGURED})
+        return Response({
+            "googleLoginEnabled": settings.GOOGLE_OAUTH_CONFIGURED,
+            "termsVersion": settings.GASTIO_TERMS_VERSION or None,
+        })

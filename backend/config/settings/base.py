@@ -170,6 +170,7 @@ SOCIALACCOUNT_PROVIDERS = {
 _google_client_id = os.getenv("GOOGLE_OAUTH_CLIENT_ID", "")
 _google_client_secret = os.getenv("GOOGLE_OAUTH_CLIENT_SECRET", "")
 GOOGLE_OAUTH_CONFIGURED = bool(_google_client_id and _google_client_secret)
+GASTIO_TERMS_VERSION = os.getenv("GASTIO_TERMS_VERSION", "").strip()
 if GOOGLE_OAUTH_CONFIGURED:
     SOCIALACCOUNT_PROVIDERS["google"]["APP"] = {
         "client_id": _google_client_id,

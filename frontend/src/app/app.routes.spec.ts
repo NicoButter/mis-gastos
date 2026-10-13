@@ -22,6 +22,24 @@ describe('application routes', () => {
     await harness.navigateByUrl('/login');
     expect(TestBed.inject(Router).url).toBe('/login');
     expect(harness.routeNativeElement?.textContent).toContain('Ingresá a Gastio');
+    expect(harness.routeNativeElement?.textContent).toContain('Privacidad');
+  });
+
+  it('serves all information pages publicly and identifies pending legal documents', async () => {
+    const pages = [
+      ['/terminos', 'Términos y condiciones de uso', 'No vigente; pendiente de aprobación'],
+      ['/privacidad', 'Política de privacidad', 'No vigente; pendiente de aprobación'],
+      ['/como-funciona', 'Cómo funciona Gastio', 'No aplica; guía informativa'],
+      ['/seguridad', 'Seguridad y protección de datos', 'No aplica; resumen informativo'],
+    ];
+    const harness = await RouterTestingHarness.create();
+
+    for (const [path, title, status] of pages) {
+      await harness.navigateByUrl(path);
+      expect(TestBed.inject(Router).url).toBe(path);
+      expect(harness.routeNativeElement?.textContent).toContain(title);
+      expect(harness.routeNativeElement?.textContent).toContain(status);
+    }
   });
 
   it('redirects an anonymous visitor from the private shell without a loop', async () => {
