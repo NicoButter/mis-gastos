@@ -33,6 +33,23 @@ def test_database_url_rejects_non_postgresql_engines(monkeypatch):
         raise AssertionError("SQLite must not be accepted")
 
 
+def test_database_url_decodes_credentials_and_preserves_connection_options(monkeypatch):
+    monkeypatch.setenv(
+        "DATABASE_URL",
+        "postgresql://audit%40user:p%40ss%3Aword@localhost/audit%2Ddb"
+        "?sslmode=verify-full&sslrootcert=/tmp/audit-ca.pem&connect_timeout=5",
+    )
+    database = database_from_env()
+    assert database["USER"] == "audit@user"
+    assert database["PASSWORD"] == "p@ss:word"
+    assert database["NAME"] == "audit-db"
+    assert database["OPTIONS"] == {
+        "sslmode": "verify-full",
+        "sslrootcert": "/tmp/audit-ca.pem",
+        "connect_timeout": "5",
+    }
+
+
 def test_financial_test_configuration_rejects_real_database_names():
     import os
     import subprocess

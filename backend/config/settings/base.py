@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
@@ -33,12 +33,17 @@ def database_from_env() -> dict[str, object]:
     port = query.get("port", [str(parsed.port or "5432")])[0]
     return {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": parsed.path.lstrip("/"),
-        "USER": parsed.username or "",
-        "PASSWORD": parsed.password or "",
+        "NAME": unquote(parsed.path.lstrip("/")),
+        "USER": unquote(parsed.username or ""),
+        "PASSWORD": unquote(parsed.password or ""),
         "HOST": host,
         "PORT": port,
         "CONN_MAX_AGE": 60,
+        "OPTIONS": {
+            name: values[0]
+            for name, values in query.items()
+            if name in {"sslmode", "sslrootcert", "sslcert", "sslkey", "connect_timeout"}
+        },
     }
 
 

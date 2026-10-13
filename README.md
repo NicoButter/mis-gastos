@@ -105,3 +105,9 @@ pagos no vuelven a contabilizar el gasto.
 Aplicar las migraciones nuevas con `python backend/manage.py migrate`. No se
 implementa ADR-002 ni una nueva arquitectura contable. Las cuotas con tarjeta
 conservan sus pagos completos y los registros históricos existentes.
+
+## Despliegue de producción
+
+La [auditoría y guía de despliegue Fedora](docs/11_operaciones/01_despliegue_produccion.md)
+describe las rutas `/srv/misgastos`, el entorno externo y los pasos manuales de actualización.
+El VPS ejecuta únicamente el backend; Angular se compila y publica desde el equipo local.

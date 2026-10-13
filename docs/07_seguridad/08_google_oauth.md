@@ -46,7 +46,7 @@ En Google Cloud crear un cliente OAuth de tipo **Aplicación web**, completar la
 - Origen JavaScript autorizado: `http://localhost:4200`.
 - URI de redireccionamiento autorizada: `http://localhost:8000/accounts/google/login/callback/`.
 
-El callback debe coincidir exactamente, incluyendo `localhost` (no `127.0.0.1`), puerto, ruta y barra final. Para producción se deben definir `GASTIO_FRONTEND_URL`, hosts, orígenes CORS y `CSRF_TRUSTED_ORIGINS` reales de HTTPS antes del despliegue; no se documenta un dominio ficticio.
+El callback debe coincidir exactamente, incluyendo `localhost` (no `127.0.0.1`), puerto, ruta y barra final. En producción definir `GASTIO_FRONTEND_URL=https://misgastos.vetrabyte.com.ar` y el host explícito. Angular y Django comparten origen: CORS y `CSRF_TRUSTED_ORIGINS` pueden quedar vacíos. Registrar en Google Cloud `https://misgastos.vetrabyte.com.ar/accounts/google/login/callback/` y comprobar que Nginx preserve `Host` y sobrescriba `X-Forwarded-Proto`. Ver la [guía de despliegue](../11_operaciones/01_despliegue_produccion.md).
 
 ## Endpoints
 
